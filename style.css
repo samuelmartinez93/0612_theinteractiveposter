@@ -535,9 +535,38 @@ h3 {
    que JS desplaza para el destello (brillarTitulo). */
 .titulo {
   position: absolute;
-  left: 424px;
-  top: 82px;
-  width: 400px;
+  left: 418px;
+  top: 92px;
+  width: 410px;
+  /* Encuadre "roto": todo el bloque inclinado */
+  transform: rotate(-6deg);
+  transform-origin: 0 0;
+  /* Al cargar se enciende poco a poco (ease-in) con un halo dorado
+     y luego se queda "respirando" con un brillo muy suave */
+  animation:
+    titulo-encender 2.4s cubic-bezier(0.55, 0, 0.75, 0.2) both,
+    titulo-respirar 3.6s ease-in-out 2.4s infinite alternate;
+}
+
+/* Las tres funciones de filter van siempre en el mismo orden para que se interpolen */
+@keyframes titulo-encender {
+  0% {
+    opacity: 0;
+    filter: brightness(0.3) blur(6px) drop-shadow(0 0 0 rgba(255, 214, 120, 0));
+  }
+  75% {
+    opacity: 1;
+    filter: brightness(1.6) blur(0) drop-shadow(0 0 22px rgba(255, 214, 120, 0.85));
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) blur(0) drop-shadow(0 0 4px rgba(255, 214, 120, 0.2));
+  }
+}
+
+@keyframes titulo-respirar {
+  from { filter: brightness(1)    blur(0) drop-shadow(0 0 4px  rgba(255, 214, 120, 0.2)); }
+  to   { filter: brightness(1.08) blur(0) drop-shadow(0 0 14px rgba(255, 214, 120, 0.45)); }
 }
 
 .titulo__a,
@@ -546,43 +575,52 @@ h3 {
   width: fit-content;
   /* Hueco extra a la derecha (itálica) y abajo (la "g", la "p"): como el
      relleno se recorta al texto, sin él se cortarían esos trazos */
-  padding: 0 12px 0.16em 0;
+  padding: 0 14px 0.16em 0;
   margin-bottom: -0.16em;
-  font-family: var(--fuente-titulo);
-  font-size: 74px;
-  line-height: 0.94;
-  letter-spacing: -0.015em;
+  font-size: 80px;
+  line-height: 0.9;
   background-size: 300% 100%;
   background-position: 100% 0;   /* la franja de luz empieza fuera, a la derecha */
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  /* Relieve: dos capas de sombra dura (rojo + tinta) que "levantan" la letra
-     como un rótulo, y una sombra suave para despegarlo del cielo */
+  /* Sombra dura roja fina + sombra suave para despegarlo del cielo */
   filter:
     drop-shadow(2px 2px 0 var(--baya))
-    drop-shadow(2px 2px 0 var(--baya))
-    drop-shadow(2px 2px 0 var(--tinta))
-    drop-shadow(0 10px 14px rgba(5, 18, 30, 0.6));
+    drop-shadow(0 8px 14px rgba(5, 18, 30, 0.65));
 }
 
-/* "Pequeños gestos," · redonda, crema */
+/* "pequeños gestos," · pequeño de verdad: serif itálica (Fraunces)
+   en minúscula y en una sola línea, crema */
 .titulo__a {
-  font-style: normal;
-  font-weight: 600;
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-weight: 500;
   font-variation-settings: "opsz" 144;
+  font-size: 54px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
   background-image: linear-gradient(100deg,
     var(--papel) 0%, var(--papel) 42%,
     #FFFFFF 48%, var(--papel) 54%,
     var(--papel) 100%);
 }
 
-/* "grandes ilusiones." · itálica, oro */
+/* "GRANDES ILUSIONES." · grande de verdad: palo seco condensada (la de
+   "diciembre") en mayúsculas espaciadas, oro. Va recta (contrarresta el giro
+   del bloque) como el título de una película bajo su frase inclinada */
 .titulo__b {
-  margin-top: 8px;
-  font-style: italic;
+  margin-top: 2px;
+  margin-left: 14px;
+  font-family: var(--fuente-display);
+  font-style: normal;
   font-weight: 600;
-  font-variation-settings: "opsz" 144;
+  font-size: 90px;
+  line-height: 0.88;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transform: rotate(6deg);
+  transform-origin: 0 0;
   background-image: linear-gradient(100deg,
     var(--oro) 0%, var(--oro) 42%,
     #FFF4C8 48%, var(--oro) 54%,
@@ -609,14 +647,39 @@ h3 {
   50%      { opacity: 1;    transform: scale(1.1) rotate(45deg); }
 }
 
+/* Orla: estrellitas pequeñas repartidas por el borde del título.
+   Primero aparecen una a una (tras el encendido) y después titilan
+   a ritmos distintos para que nunca brillen todas a la vez. */
+.titulo__chispa--orla {
+  color: #FFF8DC;
+  text-shadow: 0 0 6px var(--oro), 0 0 14px rgba(255, 214, 120, 0.6);
+  animation:
+    orla-aparecer 0.9s ease-in both,
+    titilar 2.8s ease-in-out infinite;
+  animation-delay: var(--retardo), calc(var(--retardo) + 0.9s);
+}
 
-/* 6. PEGATINA DE CÓMIC "10 € = 1 REGALO" ------------------------------------ */
+.titulo__chispa--4  { --retardo: 1.6s; left: 140px; top: -24px; font-size: 14px; }
+.titulo__chispa--5  { --retardo: 1.8s; left: 352px; top: 46px;  font-size: 12px; }
+.titulo__chispa--6  { --retardo: 2.0s; left: 372px; top: 214px; font-size: 16px; }
+.titulo__chispa--7  { --retardo: 2.2s; left: 236px; top: 300px; font-size: 11px; }
+.titulo__chispa--8  { --retardo: 2.4s; left: 70px;  top: 296px; font-size: 15px; }
+.titulo__chispa--9  { --retardo: 2.6s; left: -26px; top: 118px; font-size: 11px; }
+.titulo__chispa--10 { --retardo: 2.8s; left: -8px;  top: -16px; font-size: 13px; }
+
+@keyframes orla-aparecer {
+  from { opacity: 0;   transform: scale(0) rotate(-90deg); }
+  to   { opacity: 0.15; transform: scale(0.5) rotate(0deg); }
+}
+
+
+/* 6. PEGATINA DE CÓMIC "UNA DONACIÓN = UN REGALO" ------------------------------------ */
 .impacto {
   position: absolute;
-  left: 572px;
-  top: 392px;
-  width: 188px;
-  height: 188px;
+  left: 560px;
+  top: 380px;
+  width: 212px;
+  height: 212px;
   z-index: 4;
   transform: rotate(-8deg);
   /* Flota: sube y baja despacio y su sombra se aleja y se difumina */
@@ -656,7 +719,7 @@ h3 {
   filter: none;
 }
 
-/* Texto centrado: "10 €" grande y "= 1 regalo" en una cinta dorada */
+/* Texto centrado: "Una donación" grande y "= un regalo" en una cinta dorada */
 .impacto__texto {
   position: absolute;
   inset: 0;
@@ -667,23 +730,21 @@ h3 {
   text-align: center;
 }
 
+/* Misma tipografía navideña que la cinta "= un regalo" */
 .impacto__euros {
-  font-family: var(--fuente-carta);      /* Luckiest Guy: festiva y números claros */
-  font-weight: normal;
-  font-size: 52px;
+  font-family: var(--fuente-festiva);     /* Mountains of Christmas */
+  font-weight: 700;
+  font-size: 40px;
   line-height: 0.9;
-  letter-spacing: 1px;
   color: var(--papel);
-  -webkit-text-stroke: 5px var(--tinta);
+  -webkit-text-stroke: 6px var(--tinta);
   paint-order: stroke fill;
 }
 
-/* El símbolo € en Big Shoulders: en Luckiest Guy parece una "C" */
+/* "Una" más pequeña, encima de "donación" */
 .impacto__euros span {
-  margin-left: 6px;
-  font-family: var(--fuente-display);
-  font-weight: 900;
-  font-size: 50px;
+  display: block;
+  font-size: 30px;
 }
 
 .impacto__regalo {
@@ -771,11 +832,25 @@ h3 {
 }
 
 /* --- Dorso: regalo misterioso ---------------------------------------- */
+/* Azul del cielo del hero (como el dorso de las cartas coleccionables):
+   trama de puntos pop art + remolino de luz alrededor del emblema */
 .carta__dorso {
-  background-color: #2A6E55;
+  background-color: var(--noche);
   background-image:
-    repeating-linear-gradient(45deg, rgba(244, 197, 92, 0.16) 0 2px, transparent 2px 16px),
-    repeating-linear-gradient(-45deg, rgba(244, 197, 92, 0.16) 0 2px, transparent 2px 16px);
+    radial-gradient(rgba(255, 248, 236, 0.14) 1.3px, transparent 1.8px),
+    repeating-conic-gradient(from 0deg at 50% 46%, rgba(255, 255, 255, 0.05) 0 12deg, transparent 12deg 24deg),
+    radial-gradient(circle at 50% 46%, #3C82A8 0%, var(--noche-media) 42%, var(--noche) 80%);
+  background-size: 9px 9px, 100% 100%, 100% 100%;
+}
+
+/* Emblema centrado, con el regalo delante abajo a la derecha */
+.carta__emblema {
+  position: absolute;
+  left: 32px;
+  top: 62px;
+  width: 136px;
+  height: 136px;
+  filter: drop-shadow(4px 5px 0 rgba(0, 0, 0, 0.45));
 }
 
 /* Marco dorado interior */
@@ -789,10 +864,10 @@ h3 {
 
 .carta__dorso-regalo {
   position: absolute;
-  left: 34px;
-  top: 76px;
-  width: 128px;
-  height: 128px;
+  left: 96px;
+  top: 116px;
+  width: 86px;
+  height: 86px;
   transform: rotate(10deg);
   filter: drop-shadow(5px 6px 0 rgba(0, 0, 0, 0.45));
 }
@@ -921,7 +996,7 @@ h3 {
     radial-gradient(circle at 88% 70%, var(--oro) 0 1.5px, transparent 2px),
     radial-gradient(circle at 10% 80%, var(--papel) 0 1.5px, transparent 2px),
     radial-gradient(circle at 50% 120%, rgba(244, 197, 92, 0.45), transparent 60%),
-    linear-gradient(160deg, var(--abeto-noche), var(--abeto-claro));
+    linear-gradient(160deg, var(--noche), #3C82A8);
   overflow: hidden;
 }
 
@@ -967,6 +1042,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   padding: 2px 0 4px;
   border-bottom: 2px solid var(--tinta);
 }
@@ -978,9 +1054,12 @@ h3 {
 
 .carta__coste {
   font-family: var(--fuente-display);
-  font-weight: 900;
-  font-size: 24px;
+  font-weight: 800;
+  font-size: 15px;
   line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--baya);
 }
 
@@ -989,7 +1068,7 @@ h3 {
   font-weight: 700;
   font-style: italic;
   text-align: right;
-  color: var(--abeto);
+  color: var(--noche-media);
 }
 
 /* Onomatopeya: pegatina que aparece al girar la carta */
@@ -1179,7 +1258,7 @@ h3 {
   z-index: 8;
   width: 848px;
   height: 210px;
-  padding: 22px 34px 0;
+  padding: 18px 56px 0;    /* aire respecto al marco del cartel (16px) */
   background: var(--papel);   /* mismo crema que la nieve: sin cortes, fluye con el cartel */
 }
 
@@ -1216,14 +1295,14 @@ h3 {
 .branding__nombre {
   display: flex;
   flex-direction: column;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.3;
   white-space: nowrap;
 }
 
 .branding__nombre strong {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 800;
 }
 
@@ -1234,40 +1313,49 @@ h3 {
   box-shadow: 4px 4px 0 var(--tinta);
   font-family: var(--fuente-display);
   font-weight: 800;
-  font-size: 19px;
+  font-size: 17px;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   white-space: nowrap;
   transform: rotate(-2deg);
 }
 
-/* "Con el apoyo de": logos agrupados y centrados */
+/* "Con el apoyo de": en línea y repartidos de borde a borde,
+   alineados con la fila de Itaca y con el contacto */
 .branding__fila--apoyo {
-  justify-content: center;
-  gap: 24px;
-  margin-top: 14px;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 16px;
 }
 
+/* Serif itálica (la del título), en rojo */
 .branding__etiqueta {
-  font-family: var(--fuente-display);
-  font-weight: 800;
-  font-size: 22px;
-  text-transform: uppercase;
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--baya);
+  white-space: nowrap;
 }
 
 .branding__colaborador { width: auto; }
-.branding__colaborador--gencat { height: 40px; }
+/* Alturas compensadas para que todos los logos pesen parecido */
+.branding__colaborador--gencat { height: 36px; }
+.branding__colaborador--diba   { height: 36px; }
 .branding__colaborador--lh     { height: 48px; }
-.branding__colaborador--diba   { height: 40px; }
-.branding__colaborador--pfp    { height: 30px; }
+.branding__colaborador--pfp    { height: 26px; }
 
-/* Contacto: dirección a la izquierda, teléfono y correo en negrita a la derecha */
+/* Contacto: dirección a la izquierda, teléfono y correo en negrita a la derecha,
+   separado de los logos por un filete dorado */
 .branding__contacto {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 22px;
   margin-top: 12px;
-  font-size: 18px;
+  padding-top: 8px;
+  border-top: 2px solid var(--oro);
+  font-size: 15px;
+  white-space: nowrap;
   font-weight: 600;
   font-style: normal;
 }

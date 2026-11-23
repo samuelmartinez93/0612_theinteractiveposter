@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>¡Pequeños gestos, grandes ilusiones! · AE Itaca</title>
-  <meta name="description" content="Cartel interactivo de la campaña solidaria de Navidad de la Associació Educativa Itaca: con 10 € regalas ilusión a un niño o niña. 21 de diciembre.">
+  <meta name="description" content="Cartel interactivo de la campaña solidaria de Navidad de la Associació Educativa Itaca: con una donación regalas ilusión a un niño o niña. 21 de diciembre.">
 
   <!-- Favicon inline (evita el error 404 de /favicon.ico en la consola) -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230E3B2C'/%3E%3Crect x='5' y='13' width='22' height='15' fill='%23C8323C' stroke='%23111' stroke-width='2'/%3E%3Crect x='3' y='8' width='26' height='6' fill='%23E8C766' stroke='%23111' stroke-width='2'/%3E%3C/svg%3E">
@@ -24,6 +24,17 @@
     <!-- Explosión de cómic -->
     <symbol id="explosion" viewBox="-100 -100 200 200">
       <polygon points="0,-96 16,-52 52,-80 44,-34 92,-40 58,-6 98,22 50,28 70,72 26,52 10,98 -8,56 -46,86 -40,40 -90,44 -56,8 -96,-22 -50,-28 -74,-70 -28,-50"/>
+    </symbol>
+    <!-- Emblema del dorso de las cartas (guiño a las cartas coleccionables):
+         esfera partida en rojo y crema, franja de tinta y botón con estrella dorada -->
+    <symbol id="emblema" viewBox="-60 -60 120 120">
+      <path d="M -52 0 A 52 52 0 0 1 52 0 Z" fill="#E2504C"/>
+      <path d="M -52 0 A 52 52 0 0 0 52 0 Z" fill="#FFF8EC"/>
+      <path d="M -30 -34 A 40 40 0 0 1 -6 -42" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.6"/>
+      <rect x="-52" y="-5" width="104" height="10" fill="#15291F"/>
+      <circle r="52" fill="none" stroke="#15291F" stroke-width="6"/>
+      <circle r="19" fill="#FFF8EC" stroke="#15291F" stroke-width="6"/>
+      <polygon points="0,-12 3.5,-4 12,-3.7 5.4,1.8 7.6,10 0,5.4 -7.6,10 -5.4,1.8 -12,-3.7 -3.5,-4" fill="#F4C55C" stroke="#15291F" stroke-width="2" stroke-linejoin="round"/>
     </symbol>
     <!-- Ramita de acebo: tres hojas que se mecen por separado y bayas rojas con brillo -->
     <symbol id="acebo" viewBox="0 0 130 130">
@@ -127,11 +138,19 @@
          Al entrar con el ratón en el cartel, un destello lo cruza de lado a lado (JS).
          Los ✦ titilan siempre. -->
     <p class="titulo" id="titulo">
-      <span class="titulo__a">Pequeños<br>gestos,</span>
-      <span class="titulo__b">grandes<br>ilusiones.</span>
+      <span class="titulo__a">Pequeños gestos,</span>
+      <span class="titulo__b">grandes<br>ilusiones</span>
       <span class="titulo__chispa titulo__chispa--1" aria-hidden="true">✦</span>
       <span class="titulo__chispa titulo__chispa--2" aria-hidden="true">✦</span>
       <span class="titulo__chispa titulo__chispa--3" aria-hidden="true">✦</span>
+      <!-- Orla de estrellitas alrededor del título: se encienden una a una al cargar -->
+      <span class="titulo__chispa titulo__chispa--orla titulo__chispa--4" aria-hidden="true">✧</span>
+      <span class="titulo__chispa titulo__chispa--orla titulo__chispa--5" aria-hidden="true">✦</span>
+      <span class="titulo__chispa titulo__chispa--orla titulo__chispa--6" aria-hidden="true">✧</span>
+      <span class="titulo__chispa titulo__chispa--orla titulo__chispa--7" aria-hidden="true">✦</span>
+      <span class="titulo__chispa titulo__chispa--orla titulo__chispa--8" aria-hidden="true">✧</span>
+      <span class="titulo__chispa titulo__chispa--orla titulo__chispa--9" aria-hidden="true">✦</span>
+      <span class="titulo__chispa titulo__chispa--orla titulo__chispa--10" aria-hidden="true">✧</span>
     </p>
 
     <!-- PEGATINA DE CÓMIC con el impacto de la donación: flota suavemente sobre el cartel -->
@@ -144,8 +163,8 @@
         <use href="#explosion" x="-100" y="-100" width="200" height="200"/>
       </svg>
       <div class="impacto__texto">
-        <p class="impacto__euros">10<span>€</span></p>
-        <p class="impacto__regalo">= 1 regalo</p>
+        <p class="impacto__euros"><span>Una</span>donación</p>
+        <p class="impacto__regalo">= un regalo</p>
       </div>
     </div>
 
@@ -187,6 +206,7 @@
 
             <div class="carta__cara carta__dorso">
               <div class="carta__dorso-fondo"></div>
+              <svg class="carta__emblema" viewBox="-60 -60 120 120" aria-hidden="true"><use href="#emblema" x="-60" y="-60" width="120" height="120"/></svg>
               <svg class="carta__dorso-regalo" viewBox="0 0 120 120" aria-hidden="true">
                 <rect class="r-relleno" x="20" y="58" width="80" height="50"/>
                 <rect class="r-cinta" x="52" y="58" width="16" height="50"/>
@@ -234,7 +254,7 @@
                 <p class="carta__leyenda">Deseo n.º 1</p>
                 <div class="carta__ataque">
                   <span class="carta__accion">Leer cuentos</span>
-                  <span class="carta__coste">10&nbsp;€</span>
+                  <span class="carta__coste">Abre mundos</span>
                 </div>
                 <p class="carta__pie">★ AE Itaca</p>
               </div>
@@ -253,6 +273,7 @@
 
             <div class="carta__cara carta__dorso">
               <div class="carta__dorso-fondo"></div>
+              <svg class="carta__emblema" viewBox="-60 -60 120 120" aria-hidden="true"><use href="#emblema" x="-60" y="-60" width="120" height="120"/></svg>
               <svg class="carta__dorso-regalo" viewBox="0 0 120 120" aria-hidden="true">
                 <rect class="r-relleno" x="20" y="58" width="80" height="50"/>
                 <rect class="r-cinta" x="52" y="58" width="16" height="50"/>
@@ -300,7 +321,7 @@
                 <p class="carta__leyenda">Deseo n.º 2</p>
                 <div class="carta__ataque">
                   <span class="carta__accion">Marcar goles</span>
-                  <span class="carta__coste">10&nbsp;€</span>
+                  <span class="carta__coste">Suma sonrisas</span>
                 </div>
                 <p class="carta__pie">★ AE Itaca</p>
               </div>
@@ -319,6 +340,7 @@
 
             <div class="carta__cara carta__dorso">
               <div class="carta__dorso-fondo"></div>
+              <svg class="carta__emblema" viewBox="-60 -60 120 120" aria-hidden="true"><use href="#emblema" x="-60" y="-60" width="120" height="120"/></svg>
               <svg class="carta__dorso-regalo" viewBox="0 0 120 120" aria-hidden="true">
                 <rect class="r-relleno" x="20" y="58" width="80" height="50"/>
                 <rect class="r-cinta" x="52" y="58" width="16" height="50"/>
@@ -369,7 +391,7 @@
                 <p class="carta__leyenda">Deseo n.º 3</p>
                 <div class="carta__ataque">
                   <span class="carta__accion">Pintar sueños</span>
-                  <span class="carta__coste">10&nbsp;€</span>
+                  <span class="carta__coste">Da color</span>
                 </div>
                 <p class="carta__pie">★ AE Itaca</p>
               </div>
@@ -380,7 +402,7 @@
         <span class="pegatina carta__ono">¡WOW!</span>
       </article>
 
-      <!-- CARTA 4 · Puzle -->
+      <!-- CARTA 4 · Puzzle -->
       <article class="carta" data-color-abierto="var(--hoja)"
                style="--regalo-color:var(--papel); --cinta-color:var(--baya); --retraso:-2.4s;">
         <div class="carta__balanceo">
@@ -388,6 +410,7 @@
 
             <div class="carta__cara carta__dorso">
               <div class="carta__dorso-fondo"></div>
+              <svg class="carta__emblema" viewBox="-60 -60 120 120" aria-hidden="true"><use href="#emblema" x="-60" y="-60" width="120" height="120"/></svg>
               <svg class="carta__dorso-regalo" viewBox="0 0 120 120" aria-hidden="true">
                 <rect class="r-relleno" x="20" y="58" width="80" height="50"/>
                 <rect class="r-cinta" x="52" y="58" width="16" height="50"/>
@@ -410,7 +433,7 @@
             <div class="carta__cara carta__frente">
               <div class="carta__cuerpo">
                 <header class="carta__cabecera">
-                  <h3 class="carta__nombre">Puzle</h3>
+                  <h3 class="carta__nombre">Puzzle</h3>
                   <p class="carta__ilusion" aria-label="Ilusión 100">♥ 100</p>
                 </header>
                 <div class="carta__imagen">
@@ -433,7 +456,7 @@
                 <p class="carta__leyenda">Deseo n.º 4</p>
                 <div class="carta__ataque">
                   <span class="carta__accion">Pensar juntos</span>
-                  <span class="carta__coste">10&nbsp;€</span>
+                  <span class="carta__coste">Une piezas</span>
                 </div>
                 <p class="carta__pie">★ AE Itaca</p>
               </div>
@@ -484,8 +507,8 @@
       <div class="branding__fila branding__fila--apoyo">
         <p class="branding__etiqueta">Con el apoyo de</p>
         <img class="branding__colaborador branding__colaborador--gencat" src="assets/img/generalitat-dretssocials.png" alt="Generalitat de Catalunya · Departament de Drets Socials" width="454" height="108">
-        <img class="branding__colaborador branding__colaborador--lh" src="assets/img/logoLHospi.png" alt="Ajuntament de L'Hospitalet" width="599" height="260">
         <img class="branding__colaborador branding__colaborador--diba" src="assets/img/Logotip_Diputacio.png" alt="Diputació de Barcelona" width="513" height="170">
+        <img class="branding__colaborador branding__colaborador--lh" src="assets/img/logoLHospi.png" alt="Ajuntament de L'Hospitalet" width="599" height="260">
         <img class="branding__colaborador branding__colaborador--pfp" src="assets/img/planetafplogo.png" alt="Planeta FP, escuela del alumnado que ha diseñado el cartel" width="786" height="223">
       </div>
 
