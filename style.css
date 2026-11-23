@@ -1,5 +1,11 @@
 /* ==========================================================================
-   PEQUEÑOS GESTOS, GRANDES ILUSIONES · Cartel interactivo AE Itaca
+   ¡PEQUEÑOS GESTOS, GRANDES ILUSIONES! · Cartel interactivo AE Itaca
+   Navidad de cómic con tres referencias:
+     · Pop-art               → contornos marcados, sombras duras, pegatinas, abanico
+     · Cartas coleccionables → giro 3D, reverso con texto curvo, brillo
+     · Cómic                 → marco de viñeta, recuadros de narración, bocadillo
+     · Guiño vaporwave       → cuadrícula en perspectiva y barrio al anochecer
+   Protagonista animado: Santa en su trineo (SVG) con contorno de cómic.
    --------------------------------------------------------------------------
    Lienzo fijo de 848 × 1200 px. Todo se coloca en px dentro de .poster.
    CSS solo define el aspecto y las transiciones; las interacciones
@@ -9,23 +15,42 @@
 
 /* 1. VARIABLES ------------------------------------------------------------ */
 :root {
-  /* Paleta reducida */
-  --papel: #F0EEE9;   /* fondo blanco roto cálido */
-  --arena: #E5E1D8;   /* tono de apoyo para la "isla" */
-  --blanco: #FBFAF7;  /* franja de branding */
-  --tinta: #141414;   /* texto casi negro */
-  --coral: #E5482F;   /* acento principal (bermellón) */
-  --abeto: #1F4D3A;   /* acento secundario (verde abeto) */
-  --oro: #C9A55C;     /* solo para destellos */
-  --entorno: #2A2A28; /* fondo neutro alrededor del cartel */
+  /* Paleta navideña amable */
+  --abeto-noche: #1D5242;   /* parte alta del cielo */
+  --abeto: #24604D;         /* fondo */
+  --abeto-claro: #3A7D63;   /* cerca de las colinas */
+  --hoja: #46A673;          /* verde vivo: árboles y regalos */
+  --hoja-sombra: #2F8058;   /* lado en sombra de los árboles */
+  --oro: #F4C55C;           /* dorado cálido */
+  --oro-oscuro: #C99A2E;
+  --baya: #E2504C;          /* rojo amable de acento */
+  --papel: #FFF8EC;         /* crema */
+  --nieve-sombra: #DDEDE4;  /* nieve en sombra */
+  --tronco: #8A5A3B;
+  --tinta: #15291F;         /* contornos y texto (casi negro verdoso) */
+
+  /* Anochecer de Navidad */
+  --noche: #102A40;         /* parte alta del cielo */
+  --noche-media: #1E4A5E;
+  --atardecer: #EFB27E;     /* resplandor cálido del horizonte */
+  --barrio: #183A4A;        /* edificios */
+  --luz: #FFD27A;           /* ventanas y estela */
+
+  --entorno: #151A17;       /* fondo neutro alrededor del cartel */
+
+  /* Lenguaje cómic */
+  --borde: 4px solid var(--tinta);
 
   /* Tipografías */
-  --fuente-display: "Fraunces", Georgia, serif;
-  --fuente-texto: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --fuente-display: "Big Shoulders Display", Impact, "Arial Narrow", sans-serif;
+  --fuente-titulo: "Fraunces", Georgia, serif;
+  --fuente-festiva: "Mountains of Christmas", "Luckiest Guy", cursive;  /* tipografía navideña */
+  --fuente-texto: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --fuente-carta: "Luckiest Guy", "Big Shoulders Display", Impact, sans-serif;
 
-  /* Curvas de animación (micro-movimientos suaves) */
-  --curva-suave: cubic-bezier(0.22, 1, 0.36, 1);      /* salida suave */
-  --curva-muelle: cubic-bezier(0.34, 1.56, 0.64, 1);  /* pequeño rebote */
+  /* Curvas de animación */
+  --curva-muelle: cubic-bezier(0.34, 1.56, 0.64, 1);  /* rebote */
+  --curva-suave: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 
@@ -52,11 +77,13 @@ body {
 
 p,
 h1,
-h2 {
+h2,
+h3 {
   margin: 0;
 }
 
-/* Contenedor oculto de símbolos SVG reutilizables */
+/* Contenedor oculto de símbolos SVG reutilizables
+   (no usar display:none: las curvas de textPath dejarían de funcionar) */
 .sr-defs {
   position: absolute;
   width: 0;
@@ -80,234 +107,1005 @@ h2 {
   transform-origin: center center;
 
   overflow: hidden;
-  background: var(--papel);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  background: var(--abeto);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
 }
 
-/* Textura de grano sutil (ruido SVG) por encima de todo */
+/* Marco de viñeta de cómic: margen crema + línea de tinta */
 .poster::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 50;
-  pointer-events: none;          /* no bloquea los eventos del ratón */
-  opacity: 0.08;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 60;
+  border: 12px solid var(--papel);
+  box-shadow: inset 0 0 0 4px var(--tinta);
+  pointer-events: none;
 }
 
 /* Todo lo que tiene data-depth se desplaza con el parallax.
-   JS escribe --px y --py en cada elemento (en moverParallax). */
+   JS escribe --px y --py en cada elemento (en animar()).
+   Se usa la propiedad "translate" para no pisar otros "transform". */
 [data-depth] {
   translate: var(--px, 0px) var(--py, 0px);
   will-change: translate;
 }
 
+/* Estilo común de las "pegatinas" giradas */
+.pegatina {
+  position: absolute;
+  padding: 3px 10px;
+  border: 3px solid var(--tinta);
+  box-shadow: 3px 3px 0 var(--tinta);
+  font-family: var(--fuente-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
 
-/* 4. CAPAS DE FONDO ------------------------------------------------------- */
+
+/* 4. ESCENARIO ------------------------------------------------------------ */
 .capa {
   position: absolute;
   pointer-events: none;
 }
 
-.capa--estrellas {
+/* Cielo: azul noche → resplandor cálido de atardecer en el horizonte */
+.cielo {
+  position: absolute;
   inset: 0;
+  background:
+    radial-gradient(ellipse 75% 14% at 50% 46%, rgba(239, 178, 126, 0.55), transparent 70%),
+    linear-gradient(to bottom,
+      var(--noche) 0%,
+      var(--noche-media) 30%,
+      #4F7C80 40%,
+      var(--atardecer) 47%,
+      var(--noche-media) 60%);
+}
+
+/* Trama de puntos de cómic muy suave sobre el cielo */
+.cielo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 248, 236, 0.08) 1.4px, transparent 1.9px);
+  background-size: 14px 14px;
+}
+
+/* Estrellas: puntos en dos capas que parpadean a destiempo */
+.estrellas {
+  inset: -40px;
+  background-repeat: repeat;
+}
+
+.estrellas--a {
+  background-image:
+    radial-gradient(circle, #FFFFFF 0 1.4px, transparent 2px),
+    radial-gradient(circle, var(--luz) 0 1px, transparent 1.6px);
+  background-size: 97px 89px, 61px 73px;
+  opacity: 0.8;
+  background-position: 0 0, 30px 40px;
+  animation: parpadeo 3.2s ease-in-out infinite;
+}
+
+.estrellas--b {
+  background-image: radial-gradient(circle, #FFFFFF 0 2.2px, transparent 3px);
+  background-size: 143px 131px;
+  background-position: 60px 20px;
+  animation: parpadeo 2.4s ease-in-out infinite -1.2s;
+}
+
+/* Estrellas fugaces (las crea y anima JS) */
+.fugaces {
+  position: absolute;
+  inset: 0;
+  z-index: 4;               /* por encima de los textos: pasan muy rápido */
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.estrella-fugaz {
+  position: absolute;
+  width: 140px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(to right, rgba(255, 248, 236, 0), rgba(255, 248, 236, 0.9) 75%, #FFFFFF);
+  transform-origin: 0 50%;
+  filter: drop-shadow(0 0 4px var(--luz));
+  opacity: 0;
+}
+
+/* Cabeza brillante de la estrella */
+.estrella-fugaz::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 8px 3px var(--luz);
+}
+
+/* El barrio con las ventanas encendidas */
+.ciudad {
+  position: absolute;
+  left: -20px;
+  top: 404px;
+  width: 888px;
+  height: 160px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ciudad__edificios {
+  fill: var(--barrio);
+  stroke: var(--tinta);
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+}
+
+.ciudad__ventanas {
+  fill: url(#ventanas);
+  opacity: 0.85;
+}
+
+/* Suelo en perspectiva que avanza despacio: estrellitas, abetos, copos
+   y regalos dorados muy tenues (patrón SVG) sobre una cuadrícula suave */
+.rejilla {
+  position: absolute;
+  left: -400px;
+  top: 556px;
+  width: 1648px;
+  height: 700px;
+  background-color: var(--noche);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23FFD27A' stroke-width='3' stroke-linejoin='round' stroke-linecap='round' opacity='0.45'%3E%3Cpath d='M30 12 L41 32 L19 32 Z M30 24 L44 46 L16 46 Z M30 46 V53'/%3E%3Cpath d='M90 66 V100 M75 74 L105 92 M75 92 L105 74'/%3E%3Crect x='77' y='16' width='26' height='19'/%3E%3Cpath d='M90 16 V35 M77 22 H103 M83 11 Q90 16 97 11'/%3E%3Cpath d='M30 70 l4 9 9 1 -7 6 2 9 -8 -5 -8 5 2 -9 -7 -6 9 -1 Z'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(rgba(255, 210, 122, 0.16) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255, 210, 122, 0.16) 2px, transparent 2px);
+  background-size: 120px 120px;
+  border-top: 3px solid var(--luz);
+  box-shadow: 0 -6px 20px rgba(239, 178, 126, 0.6);
+  transform: perspective(380px) rotateX(64deg);
+  transform-origin: 50% 0;
+  animation: avance-rejilla 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes avance-rejilla {
+  from { background-position: 0 0; }
+  to   { background-position: 0 120px; }
+}
+
+/* Estela de luz: brilla suave y la luz recorre el trazo */
+.estelas {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 848px;
   height: 1200px;
+  overflow: visible;
+  pointer-events: none;
 }
 
-/* La "isla": Ítaca es pequeña, pero desde ella nacen grandes cambios */
-.capa--isla {
-  left: 470px;
-  top: 150px;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  background: var(--arena);
+.estela {
+  fill: none;
+  stroke: var(--luz);
+  stroke-width: 6px;
+  stroke-linecap: round;
+  stroke-dasharray: 160 60;
+  opacity: 0.45;
+  filter: drop-shadow(0 0 6px var(--luz));
+  animation: recorrer-estela 2.5s linear infinite;
 }
 
-/* Colores de relleno de las formas decorativas */
-.f-coral { fill: var(--coral); }
-.f-abeto { fill: var(--abeto); }
-.f-oro   { fill: var(--oro); }
-.f-tinta { fill: var(--tinta); }
+@keyframes recorrer-estela {
+  to { stroke-dashoffset: -220; }
+}
+
+/* SANTA EN TRINEO ----------------------------------------------------------
+   El contenedor sigue una ruta (offset-path) que JS anima con element.animate().
+   El SVG trae sus propias animaciones (galope, cabeceo, destellos);
+   aquí se le añade el contorno de cómic (#filtro-comic) y una sombra dura. */
+.santa {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;               /* de fondo: por detrás de los textos de la zona hero */
+  width: 250px;
+  height: 117px;
+  cursor: pointer;          /* al pasar por encima se ríe (sonido) */
+  offset-anchor: center;
+  offset-rotate: 0deg;
+}
+
+.santa__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: url(#filtro-comic) drop-shadow(5px 5px 0 rgba(21, 41, 31, 0.8));
+}
+
+/* "¡Ho, ho, ho!": aparece un momento cuando Santa despega o se ríe (JS) */
+.hohoho {
+  left: 26px;
+  top: 470px;
+  z-index: 4;
+  margin: 0;
+  background: var(--papel);
+  color: var(--baya);
+  font-size: 24px;
+  opacity: 0;
+  transform: rotate(-8deg) scale(0.4);
+  transition: opacity 0.25s ease, transform 0.4s var(--curva-muelle);
+  pointer-events: none;
+}
+
+/* Colina nevada delantera, con contorno de cómic */
+.colina {
+  position: absolute;
+  left: -30px;
+  width: 908px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.colina path {
+  stroke: var(--tinta);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.colina--delante         { top: 540px; height: 470px; }
+.colina--delante path    { fill: var(--papel); }
+
+/* Parpadeo (estrellas del cielo) */
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.2; }
+}
+
+/* MARCO DE ACEBO: ramitas en las esquinas; cada hoja se mece a su ritmo
+   y las bayas laten como lucecitas */
+.acebo {
+  position: absolute;
+  top: 2px;
+  z-index: 61;              /* por encima del marco de viñeta */
+  width: 118px;
+  height: 118px;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(3px 3px 0 rgba(21, 41, 31, 0.6));
+}
+
+.acebo--izq { left: 2px; }
+
+/* El de la derecha es el mismo dibujo, reflejado en su sitio */
+.acebo--der {
+  right: 2px;
+  scale: -1 1;
+}
+
+.acebo__hoja {
+  fill: #2F8A4A;
+  stroke: var(--tinta);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: 0% 50%;  /* gira desde el tallo */
+  animation: mecer-hoja 3.2s ease-in-out infinite alternate;
+}
+
+.acebo__hoja--clara { fill: #4FAE5E; }
+.acebo__hoja--2 { animation-delay: -1.1s; }
+.acebo__hoja--3 { animation-delay: -2.2s; }
+
+@keyframes mecer-hoja {
+  from { transform: rotate(-5deg); }
+  to   { transform: rotate(5deg); }
+}
+
+.acebo__nervio {
+  fill: none;
+  stroke: rgba(21, 41, 31, 0.5);
+  stroke-width: 1.5px;
+}
+
+.acebo__baya {
+  fill: var(--baya);
+  stroke: var(--tinta);
+  stroke-width: 2.5px;
+  animation: latir 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes latir {
+  from { fill: var(--baya); }
+  to   { fill: #FF6B5E; }
+}
+
+.acebo__brillo { fill: rgba(255, 255, 255, 0.85); }
+
+/* Lienzo de la nieve (lo dibuja JS) */
+.nieve {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 848px;
+  height: 1200px;
+  pointer-events: none;
+}
 
 
-/* 5. CABECERA ------------------------------------------------------------- */
+/* 5. ZONA HERO ------------------------------------------------------------ */
+/* Los textos de la zona hero quedan por encima de Santa cuando vuela */
+.cabecera,
+.fecha,
+.titulo {
+  z-index: 3;
+}
+
 .cabecera {
   position: absolute;
-  left: 48px;
-  top: 44px;
-  width: 752px;
+  left: 124px;
+  top: 28px;
+  width: 600px;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--tinta);
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  align-items: flex-start;
 }
 
+/* Recuadro de narración de cómic (amarillo con borde y sombra dura) */
+.cabecera__recuadro {
+  padding: 6px 14px;
+  background: var(--oro);
+  border: 3px solid var(--tinta);
+  box-shadow: 4px 4px 0 var(--tinta);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tinta);
+}
 
-/* 6. FECHA XXL ------------------------------------------------------------ */
+/* Fecha: el "21" se ve entero y limpio; "de DICIEMBRE" va justo debajo
+   como una sola línea, sin taparlo */
 .fecha {
   position: absolute;
-  left: 34px;
-  top: 92px;
+  left: 30px;
+  top: 76px;
+  width: 470px;
+  height: 400px;
   font-weight: normal;
 }
 
 .fecha__numero {
   display: block;
   font-family: var(--fuente-display);
-  font-size: 440px;
+  font-size: 390px;
   line-height: 0.82;
-  letter-spacing: -0.05em;
+  letter-spacing: 0.01em;
+  color: var(--oro);
+  /* Contorno oscuro por fuera del relleno */
+  -webkit-text-stroke: 8px var(--tinta);
+  paint-order: stroke fill;
+  /* Sombra dura roja: JS mueve --sombra-x / --sombra-y con el ratón */
+  text-shadow: var(--sombra-x, 12px) var(--sombra-y, 12px) 0 var(--baya);
   /* Peso inicial; JS lo cambia en actualizarTipografia() */
-  font-variation-settings: "wght" 500, "opsz" 144;
+  font-variation-settings: "wght" 800;
+}
+
+.fecha__de {
+  position: absolute;
+  left: 8px;
+  top: 312px;
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--oro);
+  -webkit-text-stroke: 2px var(--tinta);
+  paint-order: stroke fill;
+  text-shadow: 3px 3px 0 var(--tinta);
 }
 
 .fecha__mes {
-  display: block;
-  margin: 10px 0 0 16px;
+  position: absolute;
+  left: 64px;
+  top: 300px;
   font-family: var(--fuente-display);
+  font-weight: 900;
+  font-size: 96px;
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--papel);
+  -webkit-text-stroke: 4px var(--tinta);
+  paint-order: stroke fill;
+  text-shadow: 5px 5px 0 var(--baya);
+}
+
+/* Título de la campaña a la derecha: serif editorial minimalista.
+   Una sola familia (Fraunces) en dos estilos: redonda en crema e itálica en oro.
+   Colores lisos y sin contorno para que se lea bien, también impreso.
+   El relleno es un degradado casi plano: solo lleva una franja de luz
+   que JS desplaza para el destello (brillarTitulo). */
+.titulo {
+  position: absolute;
+  left: 424px;
+  top: 82px;
+  width: 400px;
+}
+
+.titulo__a,
+.titulo__b {
+  display: block;
+  width: fit-content;
+  /* Hueco extra a la derecha (itálica) y abajo (la "g", la "p"): como el
+     relleno se recorta al texto, sin él se cortarían esos trazos */
+  padding: 0 12px 0.16em 0;
+  margin-bottom: -0.16em;
+  font-family: var(--fuente-titulo);
+  font-size: 74px;
+  line-height: 0.94;
+  letter-spacing: -0.015em;
+  background-size: 300% 100%;
+  background-position: 100% 0;   /* la franja de luz empieza fuera, a la derecha */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Relieve: dos capas de sombra dura (rojo + tinta) que "levantan" la letra
+     como un rótulo, y una sombra suave para despegarlo del cielo */
+  filter:
+    drop-shadow(2px 2px 0 var(--baya))
+    drop-shadow(2px 2px 0 var(--baya))
+    drop-shadow(2px 2px 0 var(--tinta))
+    drop-shadow(0 10px 14px rgba(5, 18, 30, 0.6));
+}
+
+/* "Pequeños gestos," · redonda, crema */
+.titulo__a {
+  font-style: normal;
+  font-weight: 600;
+  font-variation-settings: "opsz" 144;
+  background-image: linear-gradient(100deg,
+    var(--papel) 0%, var(--papel) 42%,
+    #FFFFFF 48%, var(--papel) 54%,
+    var(--papel) 100%);
+}
+
+/* "grandes ilusiones." · itálica, oro */
+.titulo__b {
+  margin-top: 8px;
   font-style: italic;
-  font-size: 64px;
+  font-weight: 600;
+  font-variation-settings: "opsz" 144;
+  background-image: linear-gradient(100deg,
+    var(--oro) 0%, var(--oro) 42%,
+    #FFF4C8 48%, var(--oro) 54%,
+    var(--oro) 100%);
+}
+
+/* Brilli brilli: destellos que titilan junto al título */
+.titulo__chispa {
+  position: absolute;
+  font-style: normal;
   line-height: 1;
-  font-variation-settings: "wght" 400, "opsz" 144;
-  color: var(--coral);
+  color: #FFF4C8;
+  text-shadow: 0 0 8px var(--oro), 0 0 2px #FFFFFF;
+  pointer-events: none;
+  animation: titilar 2.2s ease-in-out infinite;
+}
+
+.titulo__chispa--1 { left: 270px; top: -6px;  font-size: 26px; }
+.titulo__chispa--2 { left: 318px; top: 150px; font-size: 18px; animation-delay: -0.8s; }
+.titulo__chispa--3 { left: -18px; top: 236px; font-size: 22px; animation-delay: -1.5s; }
+
+@keyframes titilar {
+  0%, 100% { opacity: 0.15; transform: scale(0.5) rotate(0deg); }
+  50%      { opacity: 1;    transform: scale(1.1) rotate(45deg); }
 }
 
 
-/* 7. REGALOS -------------------------------------------------------------- */
-.regalo {
+/* 6. PEGATINA DE CÓMIC "10 € = 1 REGALO" ------------------------------------ */
+.impacto {
   position: absolute;
+  left: 572px;
+  top: 392px;
+  width: 188px;
+  height: 188px;
+  z-index: 4;
+  transform: rotate(-8deg);
+  /* Flota: sube y baja despacio y su sombra se aleja y se difumina */
+  filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.45));
+  animation: flotar-pegatina 3.4s ease-in-out infinite alternate;
+}
+
+@keyframes flotar-pegatina {
+  from {
+    transform: rotate(-8deg) translateY(0);
+    filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.45));
+  }
+  to {
+    transform: rotate(-6deg) translateY(-9px);
+    filter: drop-shadow(0 22px 16px rgba(0, 0, 0, 0.3));
+  }
+}
+
+/* La explosión verde con contorno y sombra dura */
+.impacto__forma {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: #2E9E4F;
+  stroke: var(--tinta);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+  filter: drop-shadow(6px 6px 0 var(--tinta));
+}
+
+/* Capa de atrás: misma explosión en rojo, más grande y girada */
+.impacto__forma--atras {
+  fill: var(--baya);
+  transform: rotate(16deg) scale(1.12);
+  filter: none;
+}
+
+/* Texto centrado: "10 €" grande y "= 1 regalo" en una cinta dorada */
+.impacto__texto {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-content: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.impacto__euros {
+  font-family: var(--fuente-carta);      /* Luckiest Guy: festiva y números claros */
+  font-weight: normal;
+  font-size: 52px;
+  line-height: 0.9;
+  letter-spacing: 1px;
+  color: var(--papel);
+  -webkit-text-stroke: 5px var(--tinta);
+  paint-order: stroke fill;
+}
+
+/* El símbolo € en Big Shoulders: en Luckiest Guy parece una "C" */
+.impacto__euros span {
+  margin-left: 6px;
+  font-family: var(--fuente-display);
+  font-weight: 900;
+  font-size: 50px;
+}
+
+.impacto__regalo {
+  justify-self: center;
+  padding: 2px 10px 3px;
+  background: var(--oro);
+  border: 2px solid var(--tinta);
+  box-shadow: 2px 2px 0 var(--tinta);
+  font-family: var(--fuente-festiva);     /* Mountains of Christmas */
+  font-weight: 700;
+  font-size: 25px;
+  line-height: 1;
+  color: var(--tinta);
+  transform: rotate(-4deg);
+}
+
+
+/* 7. CARTAS COLECCIONABLES ------------------------------------------------ */
+.abanico {
+  position: absolute;
+  left: 0;
+  top: 522px;
+  width: 848px;
+  height: 300px;
   z-index: 5;
 }
 
-/* Posición de cada regalo dentro del lienzo */
-.regalo--a { left: 572px; top: 112px; width: 208px; }
-.regalo--b { left: 660px; top: 352px; width: 126px; }
-.regalo--c { left: 528px; top: 588px; width: 240px; }
-.regalo--d { left: 524px; top: 386px; width: 112px; }
+.carta {
+  position: absolute;
+  left: 324px;            /* (848 - 200) / 2 → centrada */
+  top: 0;
+  width: 200px;
+  height: 280px;
+  cursor: pointer;
+  perspective: 900px;     /* profundidad para el giro 3D */
 
-/* El cuerpo recibe la escala y la rotación (variables que escribe JS) */
-.regalo__cuerpo {
-  position: relative;
-  transform: scale(var(--regalo-escala, 1)) rotate(var(--regalo-giro, 0deg));
-  transition: transform 0.6s var(--curva-muelle);
+  /* El abanico gira alrededor de un punto por debajo de la carta */
+  transform-origin: 50% 120%;
+  /* Posición calculada por JS en colocarCarta() */
+  transform:
+    translate(var(--x, 0px), var(--y, 0px))
+    rotate(var(--giro, 0deg))
+    scale(var(--carta-escala, 1));
+  transition: transform 0.5s var(--curva-muelle);
 }
 
-.regalo__svg {
-  display: block;
+/* Balanceo en reposo (idle-animation del pen de las cartas) */
+.carta__balanceo {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: balanceo 4s ease-in-out infinite;
+  animation-delay: var(--retraso, 0s);
+}
+
+.carta.esta-abierta .carta__balanceo {
+  animation: none;
+}
+
+@keyframes balanceo {
+  0%, 100% { transform: rotateY(0deg); }
+  33%      { transform: rotateY(12deg); }
+  66%      { transform: rotateY(-12deg); }
+}
+
+/* Interior: JS escribe --rot-y (giro + inclinación) y --inclinar-x */
+.carta__interior {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--inclinar-x, 0deg)) rotateY(var(--rot-y, 0deg));
+  transition: transform 0.6s var(--curva-suave);
+}
+
+.carta__cara {
+  position: absolute;
+  inset: 0;
+  border: var(--borde);
+  border-radius: 14px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* --- Dorso: regalo misterioso ---------------------------------------- */
+.carta__dorso {
+  background-color: #2A6E55;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(244, 197, 92, 0.16) 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(-45deg, rgba(244, 197, 92, 0.16) 0 2px, transparent 2px 16px);
+}
+
+/* Marco dorado interior */
+.carta__dorso-fondo {
+  position: absolute;
+  inset: 9px;
+  border: 2px solid var(--oro);
+  border-radius: 8px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(244, 197, 92, 0.22), transparent 60%);
+}
+
+.carta__dorso-regalo {
+  position: absolute;
+  left: 34px;
+  top: 76px;
+  width: 128px;
+  height: 128px;
+  transform: rotate(10deg);
+  filter: drop-shadow(5px 6px 0 rgba(0, 0, 0, 0.45));
+}
+
+.r-relleno {
+  fill: var(--regalo-color-actual, var(--regalo-color));
+  transition: fill 0.35s ease 0.25s;
+}
+
+.r-cinta { fill: var(--cinta-color); }
+
+.carta rect,
+.carta ellipse,
+.carta circle,
+.carta polygon,
+.carta path {
+  stroke: var(--tinta);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.carta .r-brillo {
+  fill: #FFFFFF;
+  opacity: 0.5;
+  stroke: none;
+}
+
+/* Texto curvo del reverso (como "Légally Distinct" del pen) */
+.carta__curva {
+  position: absolute;
+  left: 0;
   width: 100%;
   height: auto;
   overflow: visible;
 }
 
-/* Color de relleno: --regalo-color-actual lo pone JS al abrir */
-.regalo__relleno {
-  fill: var(--regalo-color-actual, var(--regalo-color));
-  transition: fill 0.45s var(--curva-suave);
+.carta__curva--arriba { top: 4px; }
+.carta__curva--abajo  { bottom: 6px; }
+
+.carta__curva text {
+  font-family: var(--fuente-carta);
+  font-size: 24px;
+  text-anchor: middle;
+  letter-spacing: 0.5px;
 }
 
-.regalo__cinta { fill: var(--cinta-color); }
-.regalo__nudo  { fill: var(--tinta); }
+.carta__curva .curva-sombra {
+  fill: var(--tinta);
+  stroke: var(--tinta);
+  stroke-width: 6px;
+  transform: translate(2px, 3px);
+}
 
-/* La tapa sube con translateY (variable --tapa-y que escribe JS) */
-.regalo__tapa {
+.carta__curva .curva-texto {
+  fill: var(--oro);
+  stroke: var(--tinta);
+  stroke-width: 2px;
+  paint-order: stroke fill;
+}
+
+/* --- Frente: el deseo ------------------------------------------------- */
+.carta__frente {
+  transform: rotateY(180deg);
+  padding: 7px;
+  background: linear-gradient(135deg, var(--oro), #FBE7B0 45%, var(--oro-oscuro));
+}
+
+/* Brillo holográfico dorado: JS mueve --brillo-x / --brillo-y con el ratón */
+.carta__frente::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg,
+    transparent 25%,
+    rgba(255, 244, 200, 0.7) 45%,
+    rgba(244, 197, 92, 0.5) 52%,
+    transparent 72%);
+  background-size: 250% 250%;
+  background-position: var(--brillo-x, 50%) var(--brillo-y, 50%);
+  mix-blend-mode: soft-light;
+}
+
+.carta__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 8px 6px 6px;
+  border: 2px solid var(--tinta);
+  border-radius: 6px;
+  background: var(--papel);
+}
+
+.carta__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.carta__nombre {
+  font-family: var(--fuente-carta);
+  font-weight: normal;
+  font-size: 21px;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  color: var(--baya);
+}
+
+.carta__ilusion {
+  font-family: var(--fuente-display);
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--baya);
+}
+
+.carta__imagen {
+  height: 104px;
+  border: 3px solid var(--oro-oscuro);
+  outline: 2px solid var(--tinta);
+  background:
+    radial-gradient(circle at 18% 22%, var(--oro) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 78% 16%, var(--papel) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 88% 70%, var(--oro) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 10% 80%, var(--papel) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 50% 120%, rgba(244, 197, 92, 0.45), transparent 60%),
+    linear-gradient(160deg, var(--abeto-noche), var(--abeto-claro));
+  overflow: hidden;
+}
+
+.carta__imagen svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Regalo del frente: la tapa sube y el deseo sale de la caja */
+.carta__tapa {
   transform-box: fill-box;
   transform-origin: 0% 100%;
   transform: translateY(var(--tapa-y, 0px)) rotate(var(--tapa-giro, 0deg));
-  transition: transform 0.6s var(--curva-muelle);
+  transition: transform 0.55s var(--curva-muelle) 0.25s;
 }
 
-/* Destello dorado que "sale" de la caja al abrirla */
-.regalo__destello {
-  fill: var(--oro);
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: translateY(var(--destello-y, 30px)) scale(var(--destello-escala, 0.3));
-  opacity: var(--destello-opacidad, 0);
-  transition: transform 0.7s var(--curva-muelle), opacity 0.3s ease;
+.carta__icono {
+  transform: translateY(var(--icono-y, 34px));
+  opacity: var(--icono-opacidad, 0);
+  transition: transform 0.6s var(--curva-muelle) 0.35s, opacity 0.2s ease 0.35s;
 }
 
-/* Etiqueta con el deseo: oculta al principio, JS cambia su opacidad */
-.regalo__deseo {
-  position: absolute;
-  right: -6px;
-  bottom: 10%;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: var(--papel);
-  border: 1.5px solid var(--tinta);
+.i-papel { fill: var(--papel); }
+.i-tinta { fill: var(--tinta); }
+.i-rojo  { fill: var(--baya); }
+.i-verde { fill: var(--hoja); }
+.i-oro   { fill: var(--oro); }
+.carta .i-linea { fill: none; stroke-width: 2px; }
+
+.carta__leyenda {
+  padding: 1px 0;
+  border: 2px solid var(--tinta);
+  background: linear-gradient(55deg, #E2B85E, #FBE7B0, #D2A548);
   font-size: 16px;
-  font-weight: 600;
-  white-space: nowrap;
+  font-weight: 700;
+  font-style: italic;
+  text-align: center;
+}
+
+.carta__ataque {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 0 4px;
+  border-bottom: 2px solid var(--tinta);
+}
+
+.carta__accion {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.carta__coste {
+  font-family: var(--fuente-display);
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--baya);
+}
+
+.carta__pie {
+  font-size: 16px;
+  font-weight: 700;
+  font-style: italic;
+  text-align: right;
+  color: var(--abeto);
+}
+
+/* Onomatopeya: pegatina que aparece al girar la carta */
+.carta__ono {
+  top: -32px;
+  left: 30px;
+  z-index: 3;
+  background: var(--oro);
+  color: var(--tinta);
+  font-size: 24px;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(8px) rotate(-4deg);
-  transition: opacity 0.35s ease, transform 0.5s var(--curva-muelle);
+  transform: rotate(-10deg) scale(0.5);
+  transition: opacity 0.2s ease, transform 0.45s var(--curva-muelle);
 }
 
-.regalo.esta-abierto .regalo__deseo {
-  transform: translateY(0) rotate(-4deg);
+/* Al levantarse, la carta deja debajo una zona invisible que sigue contando
+   como "dentro": así no parpadea si el cursor estaba en su borde inferior */
+.carta.esta-abierta::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 60px;
 }
 
 
-/* 8. MENSAJE -------------------------------------------------------------- */
+/* 8. MENSAJE: bocadillo de cómic ------------------------------------------ */
 .mensaje {
   position: absolute;
-  left: 48px;
-  top: 616px;
-  width: 440px;
+  left: 104px;
+  top: 838px;
+  z-index: 6;
+  width: 640px;
+  padding: 8px 24px 34px;
+  background: var(--papel);
+  border: var(--borde);
+  box-shadow: 8px 8px 0 var(--oro);
+  text-align: center;
+  transform: rotate(-1deg);
+}
+
+/* Pico del bocadillo: sale del centro y apunta hacia las cartas */
+.mensaje::before {
+  content: "";
+  position: absolute;
+  left: 290px;
+  top: -32px;
+  width: 46px;
+  height: 32px;
+  background: var(--tinta);
+  clip-path: polygon(0 100%, 62% 100%, 100% 0);
+}
+
+.mensaje::after {
+  content: "";
+  position: absolute;
+  left: 297px;
+  top: -20px;
+  width: 32px;
+  height: 22px;
+  background: var(--papel);
+  clip-path: polygon(0 100%, 58% 100%, 94% 0);
 }
 
 .mensaje__titular {
-  font-size: 36px;
-  font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  font-family: var(--fuente-display);
+  font-weight: 900;
+  font-size: 40px;
+  line-height: 0.95;
+  text-transform: uppercase;
+  color: var(--tinta);
 }
 
 .mensaje__texto {
-  margin-top: 18px;
-  font-size: 18px;
-  line-height: 1.45;
+  margin-top: 4px;
+  font-family: var(--fuente-titulo);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 23px;
+  white-space: nowrap;
+  color: var(--baya);
 }
 
 
 /* 9. LLAMADA A LA ACCIÓN -------------------------------------------------- */
 .cta {
   position: absolute;
-  left: 48px;
-  top: 820px;
-  width: 752px;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-}
-
-.cta__boton {
+  left: 266px;
+  top: 926px;
+  z-index: 9;               /* por encima del footer: queda "pegado" entre las dos zonas */
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  height: 68px;
-  padding: 0 30px;
-  border-radius: 999px;          /* etiqueta muy redondeada */
-  background-color: var(--tinta);
-  color: var(--papel);
-  font-size: 22px;
-  font-weight: 600;
+  gap: 10px;
+  padding: 12px 18px;
+  white-space: nowrap;
+  background-color: var(--oro);
+  color: var(--tinta);
+  border: var(--borde);
+  box-shadow: 8px 8px 0 var(--baya);
+  font-family: var(--fuente-display);
+  font-weight: 900;
+  font-size: 30px;
+  text-transform: uppercase;
   text-decoration: none;
-  transition: background-color 0.35s var(--curva-suave);
+  transform: rotate(-2deg);
+  transition:
+    background-color 0.25s ease,
+    transform 0.3s var(--curva-muelle),
+    box-shadow 0.3s var(--curva-muelle);
 }
 
-.cta__boton:focus-visible {
-  outline: 3px solid var(--coral);
-  outline-offset: 4px;
+.cta:focus-visible {
+  outline: 4px solid var(--papel);
+  outline-offset: 6px;
 }
 
 /* La flecha aparece desde la izquierda (JS cambia opacity y transform) */
@@ -315,32 +1113,61 @@ h2 {
   display: inline-block;
   opacity: 0;
   transform: translateX(-10px);
-  transition: opacity 0.3s ease, transform 0.4s var(--curva-muelle);
-}
-
-.cta__impacto {
-  font-family: var(--fuente-display);
-  font-style: italic;
-  font-size: 44px;
-  font-variation-settings: "wght" 500, "opsz" 144;
-  color: var(--coral);
+  transition: opacity 0.25s ease, transform 0.4s var(--curva-muelle);
 }
 
 
-/* 10. MENSAJE FINAL ------------------------------------------------------- */
+/* Botón discreto para reiniciar y barajar las cartas (siempre disponible) */
+.reiniciar {
+  position: absolute;
+  left: 770px;
+  top: 848px;
+  z-index: 7;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 2px solid var(--tinta);
+  border-radius: 50%;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.8;
+  box-shadow: 2px 2px 0 var(--tinta);
+  transition: opacity 0.2s ease, transform 0.3s var(--curva-muelle);
+}
+
+.reiniciar:focus-visible {
+  outline: 3px solid var(--oro);
+  outline-offset: 3px;
+  opacity: 1;
+}
+
+/* 10. MENSAJE FINAL: recuadro de cómic -------------------------------------
+   Va en el hueco entre el "21", Santa y la pegatina: así no hay que mover nada. */
 .gracias {
   position: absolute;
-  left: 48px;
-  top: 922px;
-  width: 752px;
+  left: 276px;
+  top: 462px;
+  z-index: 7;
+  width: 284px;
+  padding: 8px 10px 7px;
+  background: var(--oro);
+  color: var(--tinta);
+  border: 3px solid var(--tinta);
+  box-shadow: 6px 6px 0 var(--baya);
   font-family: var(--fuente-display);
-  font-style: italic;
-  font-size: 36px;
-  font-variation-settings: "wght" 400, "opsz" 144;
-  color: var(--abeto);
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 0.98;
+  text-align: center;
+  text-transform: uppercase;
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.6s ease, transform 0.8s var(--curva-suave);
+  transform: rotate(-3deg) scale(0);
+  transition: opacity 0.3s ease, transform 0.6s var(--curva-muelle);
 }
 
 
@@ -348,12 +1175,12 @@ h2 {
 .branding {
   position: absolute;
   left: 0;
-  top: 984px;
+  top: 990px;
+  z-index: 8;
   width: 848px;
-  height: 216px;
-  padding: 18px 48px 0;
-  background: var(--blanco);
-  border-top: 1px solid var(--tinta);
+  height: 210px;
+  padding: 22px 34px 0;
+  background: var(--papel);   /* mismo crema que la nieve: sin cortes, fluye con el cartel */
 }
 
 .branding__fila {
@@ -373,10 +1200,10 @@ h2 {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 72px;
-  height: 72px;
-  border-radius: 18px;
-  background: var(--tinta);
+  width: 70px;
+  height: 70px;
+  background: var(--abeto);
+  box-shadow: 4px 4px 0 var(--oro);
 }
 
 .branding__logo-itaca img {
@@ -389,55 +1216,68 @@ h2 {
 .branding__nombre {
   display: flex;
   flex-direction: column;
-  font-size: 16px;
-  line-height: 1.35;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
 }
 
 .branding__nombre strong {
-  font-size: 18px;
+  font-size: 21px;
+  font-weight: 800;
 }
 
 .branding__sello {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: 1.5px solid var(--abeto);
-  border-radius: 999px;
-  color: var(--abeto);
-  font-size: 16px;
-  font-weight: 600;
+  padding: 6px 14px;
+  background: var(--oro);
+  border: 3px solid var(--tinta);
+  box-shadow: 4px 4px 0 var(--tinta);
+  font-family: var(--fuente-display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(-2deg);
 }
 
-.branding__sello svg {
-  fill: var(--oro);
-}
-
+/* "Con el apoyo de": logos agrupados y centrados */
 .branding__fila--apoyo {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(20, 20, 20, 0.15);
+  justify-content: center;
+  gap: 24px;
+  margin-top: 14px;
 }
 
 .branding__etiqueta {
-  font-size: 16px;
-  font-weight: 600;
+  font-family: var(--fuente-display);
+  font-weight: 800;
+  font-size: 22px;
+  text-transform: uppercase;
 }
 
 .branding__colaborador { width: auto; }
-.branding__colaborador--gencat { height: 38px; }
-.branding__colaborador--lh     { height: 52px; }
-.branding__colaborador--diba   { height: 38px; }
+.branding__colaborador--gencat { height: 40px; }
+.branding__colaborador--lh     { height: 48px; }
+.branding__colaborador--diba   { height: 40px; }
+.branding__colaborador--pfp    { height: 30px; }
 
+/* Contacto: dirección a la izquierda, teléfono y correo en negrita a la derecha */
 .branding__contacto {
-  margin-top: 10px;
-  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 12px;
+  font-size: 18px;
+  font-weight: 600;
   font-style: normal;
-  letter-spacing: -0.005em;
+}
+
+.branding__contacto strong {
+  font-weight: 800;
 }
 
 
-/* 12. ESTADO FINAL (tecla F o todos los regalos abiertos) ----------------- */
+/* 13. ESTADO FINAL (tecla F o todas las cartas giradas) ------------------- */
 /* El cartel se muestra a escala 1, centrado; si la ventana es más
    pequeña se permite scroll para poder verlo entero. */
 body.es-final {
@@ -455,13 +1295,16 @@ body.es-final .poster {
 }
 
 
-/* 13. MOVIMIENTO REDUCIDO ------------------------------------------------- */
-/* Si el usuario lo pide en su sistema, las transiciones son casi instantáneas
-   (JS además desactiva el parallax). */
+
+/* 14. MOVIMIENTO REDUCIDO ------------------------------------------------- */
+/* Si el usuario lo pide en su sistema: sin animaciones en bucle y
+   transiciones casi instantáneas (JS además desactiva parallax y nieve). */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
+    animation: none !important;
   }
+
 }

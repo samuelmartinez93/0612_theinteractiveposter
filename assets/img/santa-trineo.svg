@@ -1,0 +1,281 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420"
+     role="img" aria-label="Santa Claus de piezas de construcción en su trineo tirado por dos renos">
+  <!--
+    SANTA EN TRINEO · estilo piezas de construcción
+    Fondo transparente. Cada parte tiene id/clase para animarla desde CSS o JS:
+      #trineo, #santa, #saco, #reno-1, #reno-2, .pata.a / .pata.b, .cabeza, .nariz, .cascabel, .destello
+  -->
+  <style>
+    /* --- Galope: las patas giran desde la cadera --- */
+    .pata {
+      transform-box: fill-box;
+      transform-origin: 50% 0;
+      animation: galope .55s ease-in-out infinite alternate;
+    }
+    .pata.b { animation-delay: -.55s; }                 /* fase opuesta */
+    #reno-2 .pata.a { animation-delay: -.27s; }          /* el 2º reno desfasado */
+    #reno-2 .pata.b { animation-delay: -.82s; }
+
+    /* --- Bote del cuerpo de cada reno --- */
+    .reno { animation: bote .55s ease-in-out infinite alternate; }
+    #reno-2 { animation-delay: -.27s; }
+
+    /* --- Cabeceo --- */
+    .cabeza { transform-box: fill-box; transform-origin: 20% 100%;
+              animation: cabeceo 1.1s ease-in-out infinite alternate; }
+
+    /* --- Trineo flotando suave --- */
+    #trineo { animation: flotar 1.6s ease-in-out infinite alternate; }
+
+    /* --- Brillo de la nariz roja --- */
+    #reno-2 .nariz { animation: brillo 1s ease-in-out infinite alternate; }
+
+    /* --- Destellos mágicos --- */
+    .destello { transform-box: fill-box; transform-origin: center;
+                animation: titilar 1.2s ease-in-out infinite alternate; }
+    .destello:nth-of-type(2) { animation-delay: -.4s; }
+    .destello:nth-of-type(3) { animation-delay: -.8s; }
+
+    @keyframes galope  { from { transform: rotate(24deg); }  to { transform: rotate(-24deg); } }
+    @keyframes bote    { from { transform: translateY(0); }   to { transform: translateY(-6px); } }
+    @keyframes cabeceo { from { transform: rotate(-3deg); }  to { transform: rotate(4deg); } }
+    @keyframes flotar  { from { transform: translateY(0); }   to { transform: translateY(-5px); } }
+    @keyframes brillo  { from { opacity: 1; }                to { opacity: .55; } }
+    @keyframes titilar { from { transform: scale(.4); opacity: .3; } to { transform: scale(1); opacity: 1; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+    }
+  </style>
+
+  <defs>
+    <!-- Stud (el "botón" de encima de cada pieza). Hereda el color con fill en <use>. -->
+    <g id="stud">
+      <rect x="0" y="-7" width="16" height="7" rx="1"/>
+      <ellipse cx="8" cy="-7" rx="8" ry="3"/>
+      <ellipse cx="8" cy="-7" rx="8" ry="3" fill="#fff" opacity=".3"/>
+    </g>
+    <path id="estrella" d="M0 -10 L2.5 -2.5 L10 0 L2.5 2.5 L0 10 L-2.5 2.5 L-10 0 L-2.5 -2.5 Z"/>
+  </defs>
+
+  <!-- ================= DESTELLOS (estela) ================= -->
+  <g id="destellos" fill="#F2B705">
+    <use class="destello" href="#estrella" transform="translate(28 250)"/>
+    <use class="destello" href="#estrella" transform="translate(12 300) scale(.7)"/>
+    <use class="destello" href="#estrella" transform="translate(30 345) scale(.5)"/>
+  </g>
+
+  <!-- ================= RIENDAS (detrás de los renos) ================= -->
+  <g id="riendas" fill="none" stroke="#6B4220" stroke-width="3" stroke-linecap="round">
+    <path d="M263 212 Q420 160 564 205"/>
+    <path d="M263 212 Q560 150 804 205"/>
+    <!-- Tiros del trineo a los renos -->
+    <path d="M358 250 L440 245" stroke-width="5"/>
+    <path d="M578 245 L680 245" stroke-width="5"/>
+  </g>
+
+  <!-- ================= RENO-1 ================= -->
+  <g id="reno-1" class="reno">
+    <!-- Patas del fondo (más oscuras) -->
+    <g class="pata b">
+      <rect x="454" y="257" width="16" height="62" rx="3" fill="#6B4220"/>
+      <rect x="454" y="315" width="16" height="12" rx="2" fill="#1E1E1E"/>
+    </g>
+    <g class="pata a">
+      <rect x="560" y="257" width="16" height="62" rx="3" fill="#6B4220"/>
+      <rect x="560" y="315" width="16" height="12" rx="2" fill="#1E1E1E"/>
+    </g>
+
+    <!-- Cola -->
+    <rect x="418" y="221" width="16" height="13" rx="3" fill="#F4F4F0"/>
+
+    <!-- Cuerpo (ladrillo con studs) -->
+    <use href="#stud" x="440" y="215" fill="#8B5A2B"/>
+    <use href="#stud" x="464" y="215" fill="#8B5A2B"/>
+    <use href="#stud" x="488" y="215" fill="#8B5A2B"/>
+    <use href="#stud" x="512" y="215" fill="#8B5A2B"/>
+    <rect x="430" y="215" width="150" height="55" rx="5" fill="#8B5A2B"/>
+    <rect x="430" y="255" width="150" height="15" rx="5" fill="#000" opacity=".15"/>
+    <rect x="442" y="245" width="110" height="12" rx="4" fill="#C9935B" opacity=".6"/>
+
+    <!-- Arnés -->
+    <rect x="480" y="213" width="14" height="57" fill="#D62E2E"/>
+    <circle cx="487" cy="260" r="6" fill="#F2B705" stroke="#C98F00" stroke-width="2"/>
+
+    <!-- Cuello -->
+    <rect x="548" y="173" width="32" height="52" rx="4" fill="#8B5A2B"/>
+    <rect x="546" y="205" width="36" height="10" rx="3" fill="#D62E2E"/>
+    <circle class="cascabel" cx="564" cy="221" r="7" fill="#F2B705" stroke="#C98F00" stroke-width="2"/>
+
+    <!-- Cabeza -->
+    <g class="cabeza">
+      <!-- Astas de ladrillitos -->
+      <g fill="#E2C08D">
+        <rect x="554" y="103" width="9" height="40" rx="2"/>
+        <rect x="540" y="103" width="30" height="9" rx="2"/>
+        <rect x="540" y="89" width="9" height="20" rx="2"/>
+        <rect x="580" y="109" width="9" height="34" rx="2"/>
+        <rect x="580" y="109" width="26" height="9" rx="2"/>
+        <rect x="597" y="95" width="9" height="20" rx="2"/>
+      </g>
+      <!-- Oreja -->
+      <rect x="536" y="143" width="18" height="10" rx="3" fill="#6B4220"/>
+      <!-- Cabeza y hocico -->
+      <rect x="544" y="137" width="56" height="40" rx="7" fill="#8B5A2B"/>
+      <rect x="588" y="147" width="32" height="28" rx="7" fill="#C9935B"/>
+      <circle cx="580" cy="151" r="4" fill="#1E1E1E"/>
+      <circle cx="581.5" cy="149.5" r="1.3" fill="#fff"/>
+      <circle class="nariz" cx="620" cy="158" r="8" fill="#1E1E1E"/>
+      <circle cx="617" cy="155" r="2.5" fill="#fff" opacity=".6"/>
+    </g>
+
+    <!-- Patas delanteras (más claras, delante del cuerpo) -->
+    <g class="pata a">
+      <rect x="438" y="257" width="16" height="62" rx="3" fill="#8B5A2B"/>
+      <rect x="438" y="315" width="16" height="12" rx="2" fill="#1E1E1E"/>
+    </g>
+    <g class="pata b">
+      <rect x="544" y="257" width="16" height="62" rx="3" fill="#8B5A2B"/>
+      <rect x="544" y="315" width="16" height="12" rx="2" fill="#1E1E1E"/>
+    </g>
+  </g>
+
+  <!-- ================= RENO-2 ================= -->
+  <g id="reno-2" class="reno">
+    <!-- Patas del fondo (más oscuras) -->
+    <g class="pata b">
+      <rect x="694" y="257" width="16" height="62" rx="3" fill="#6B4220"/>
+      <rect x="694" y="315" width="16" height="12" rx="2" fill="#1E1E1E"/>
+    </g>
+    <g class="pata a">
+      <rect x="800" y="257" width="16" height="62" rx="3" fill="#6B4220"/>
+      <rect x="800" y="315" width="16" height="12" rx="2" fill="#1E1E1E"/>
+    </g>
+
+    <!-- Cola -->
+    <rect x="658" y="221" width="16" height="13" rx="3" fill="#F4F4F0"/>
+
+    <!-- Cuerpo (ladrillo con studs) -->
+    <use href="#stud" x="680" y="215" fill="#8B5A2B"/>
+    <use href="#stud" x="704" y="215" fill="#8B5A2B"/>
+    <use href="#stud" x="728" y="215" fill="#8B5A2B"/>
+    <use href="#stud" x="752" y="215" fill="#8B5A2B"/>
+    <rect x="670" y="215" width="150" height="55" rx="5" fill="#8B5A2B"/>
+    <rect x="670" y="255" width="150" height="15" rx="5" fill="#000" opacity=".15"/>
+    <rect x="682" y="245" width="110" height="12" rx="4" fill="#C9935B" opacity=".6"/>
+
+    <!-- Arnés -->
+    <rect x="720" y="213" width="14" height="57" fill="#D62E2E"/>
+    <circle cx="727" cy="260" r="6" fill="#F2B705" stroke="#C98F00" stroke-width="2"/>
+
+    <!-- Cuello -->
+    <rect x="788" y="173" width="32" height="52" rx="4" fill="#8B5A2B"/>
+    <rect x="786" y="205" width="36" height="10" rx="3" fill="#D62E2E"/>
+    <circle class="cascabel" cx="804" cy="221" r="7" fill="#F2B705" stroke="#C98F00" stroke-width="2"/>
+
+    <!-- Cabeza -->
+    <g class="cabeza">
+      <!-- Astas de ladrillitos -->
+      <g fill="#E2C08D">
+        <rect x="794" y="103" width="9" height="40" rx="2"/>
+        <rect x="780" y="103" width="30" height="9" rx="2"/>
+        <rect x="780" y="89" width="9" height="20" rx="2"/>
+        <rect x="820" y="109" width="9" height="34" rx="2"/>
+        <rect x="820" y="109" width="26" height="9" rx="2"/>
+        <rect x="837" y="95" width="9" height="20" rx="2"/>
+      </g>
+      <!-- Oreja -->
+      <rect x="776" y="143" width="18" height="10" rx="3" fill="#6B4220"/>
+      <!-- Cabeza y hocico -->
+      <rect x="784" y="137" width="56" height="40" rx="7" fill="#8B5A2B"/>
+      <rect x="828" y="147" width="32" height="28" rx="7" fill="#C9935B"/>
+      <circle cx="820" cy="151" r="4" fill="#1E1E1E"/>
+      <circle cx="821.5" cy="149.5" r="1.3" fill="#fff"/>
+      <circle class="nariz" cx="860" cy="158" r="8" fill="#D62E2E"/>
+      <circle cx="857" cy="155" r="2.5" fill="#fff" opacity=".6"/>
+    </g>
+
+    <!-- Patas delanteras (más claras, delante del cuerpo) -->
+    <g class="pata a">
+      <rect x="678" y="257" width="16" height="62" rx="3" fill="#8B5A2B"/>
+      <rect x="678" y="315" width="16" height="12" rx="2" fill="#1E1E1E"/>
+    </g>
+    <g class="pata b">
+      <rect x="784" y="257" width="16" height="62" rx="3" fill="#8B5A2B"/>
+      <rect x="784" y="315" width="16" height="12" rx="2" fill="#1E1E1E"/>
+    </g>
+  </g>
+
+  <!-- ================= TRINEO + SANTA ================= -->
+  <g id="trineo">
+    <!-- Saco de regalos -->
+    <g id="saco">
+      <rect x="72" y="118" width="28" height="26" rx="3" fill="#F2B705"/>
+      <rect x="83" y="118" width="6" height="26" fill="#D62E2E"/>
+      <rect x="104" y="108" width="24" height="30" rx="3" fill="#F4F4F0"/>
+      <rect x="113" y="108" width="6" height="30" fill="#2E7D4F"/>
+      <ellipse cx="105" cy="178" rx="58" ry="46" fill="#2E7D4F"/>
+      <ellipse cx="105" cy="140" rx="40" ry="10" fill="#1F5A38"/>
+    </g>
+
+    <!-- Respaldo -->
+    <use href="#stud" x="56" y="172" fill="#D62E2E"/>
+    <use href="#stud" x="78" y="172" fill="#D62E2E"/>
+    <use href="#stud" x="100" y="172" fill="#D62E2E"/>
+    <rect x="50" y="172" width="72" height="90" rx="5" fill="#D62E2E"/>
+    <rect x="50" y="172" width="12" height="90" rx="4" fill="#000" opacity=".12"/>
+
+    <!-- SANTA (minifigura) -->
+    <g id="santa">
+      <!-- Brazo trasero -->
+      <rect x="154" y="168" width="20" height="44" rx="6" fill="#A61F1F" transform="rotate(25 164 170)"/>
+      <circle cx="145" cy="212" r="9" fill="#1E1E1E"/>
+      <!-- Torso trapezoidal -->
+      <path d="M158 244 L242 244 L231 162 L169 162 Z" fill="#D62E2E"/>
+      <rect x="194" y="164" width="12" height="80" fill="#F4F4F0"/>
+      <rect x="161" y="222" width="78" height="12" fill="#1E1E1E"/>
+      <rect x="192" y="220" width="16" height="16" rx="2" fill="none" stroke="#F2B705" stroke-width="3"/>
+      <!-- Cabeza -->
+      <rect x="191" y="152" width="18" height="12" fill="#F5C08A"/>
+      <rect x="174" y="108" width="52" height="50" rx="12" fill="#F5C08A"/>
+      <circle cx="191" cy="128" r="3.5" fill="#1E1E1E"/>
+      <circle cx="209" cy="128" r="3.5" fill="#1E1E1E"/>
+      <circle cx="183" cy="137" r="4" fill="#F28B82" opacity=".6"/>
+      <circle cx="217" cy="137" r="4" fill="#F28B82" opacity=".6"/>
+      <!-- Barba y bigote -->
+      <path d="M176 138 L224 138 L218 178 Q200 192 182 178 Z" fill="#F4F4F0"/>
+      <path d="M186 141 Q200 132 214 141 Q200 148 186 141 Z" fill="#DADAD4"/>
+      <!-- Gorro -->
+      <path d="M172 112 C178 80 196 58 222 56 C232 55 240 60 244 68 L232 72 C224 66 214 70 214 82 L228 112 Z" fill="#D62E2E"/>
+      <rect x="166" y="102" width="68" height="16" rx="8" fill="#F4F4F0"/>
+      <circle id="pompon" cx="246" cy="70" r="10" fill="#F4F4F0"/>
+      <!-- Brazo delantero sujetando riendas -->
+      <rect x="226" y="168" width="20" height="45" rx="6" fill="#D62E2E" transform="rotate(-35 236 170)"/>
+      <circle cx="263" cy="212" r="9" fill="#1E1E1E"/>
+    </g>
+
+    <!-- Cuerpo delantero del trineo (tapa las piernas de Santa) -->
+    <use href="#stud" x="270" y="236" fill="#D62E2E"/>
+    <use href="#stud" x="294" y="236" fill="#D62E2E"/>
+    <rect x="50" y="236" width="300" height="94" rx="5" fill="#D62E2E"/>
+    <rect x="50" y="312" width="300" height="18" rx="5" fill="#000" opacity=".15"/>
+    <rect x="50" y="270" width="310" height="10" fill="#F2B705"/>
+    <use href="#stud" x="328" y="196" fill="#D62E2E"/>
+    <rect x="318" y="196" width="44" height="134" rx="8" fill="#D62E2E"/>
+    <circle cx="340" cy="230" r="9" fill="none" stroke="#F2B705" stroke-width="4"/>
+    <!-- Remaches -->
+    <g fill="#C98F00">
+      <circle cx="80" cy="300" r="4"/><circle cx="150" cy="300" r="4"/>
+      <circle cx="220" cy="300" r="4"/><circle cx="290" cy="300" r="4"/>
+    </g>
+
+    <!-- Patines -->
+    <g fill="#F2B705">
+      <rect x="90" y="328" width="12" height="30"/>
+      <rect x="190" y="328" width="12" height="30"/>
+      <rect x="290" y="328" width="12" height="30"/>
+    </g>
+    <path d="M36 362 L330 362 Q372 362 376 330 Q378 305 352 302" fill="none"
+          stroke="#F2B705" stroke-width="10" stroke-linecap="round"/>
+  </g>
+</svg>
