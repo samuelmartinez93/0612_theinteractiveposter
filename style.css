@@ -1,0 +1,467 @@
+/* ==========================================================================
+   PEQUEÑOS GESTOS, GRANDES ILUSIONES · Cartel interactivo AE Itaca
+   --------------------------------------------------------------------------
+   Lienzo fijo de 848 × 1200 px. Todo se coloca en px dentro de .poster.
+   CSS solo define el aspecto y las transiciones; las interacciones
+   las controla JavaScript (main.js). No se usa :hover para ellas.
+   ========================================================================== */
+
+
+/* 1. VARIABLES ------------------------------------------------------------ */
+:root {
+  /* Paleta reducida */
+  --papel: #F0EEE9;   /* fondo blanco roto cálido */
+  --arena: #E5E1D8;   /* tono de apoyo para la "isla" */
+  --blanco: #FBFAF7;  /* franja de branding */
+  --tinta: #141414;   /* texto casi negro */
+  --coral: #E5482F;   /* acento principal (bermellón) */
+  --abeto: #1F4D3A;   /* acento secundario (verde abeto) */
+  --oro: #C9A55C;     /* solo para destellos */
+  --entorno: #2A2A28; /* fondo neutro alrededor del cartel */
+
+  /* Tipografías */
+  --fuente-display: "Fraunces", Georgia, serif;
+  --fuente-texto: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+
+  /* Curvas de animación (micro-movimientos suaves) */
+  --curva-suave: cubic-bezier(0.22, 1, 0.36, 1);      /* salida suave */
+  --curva-muelle: cubic-bezier(0.34, 1.56, 0.64, 1);  /* pequeño rebote */
+}
+
+
+/* 2. BASE ----------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  overflow: hidden;              /* sin scroll */
+  background: var(--entorno);    /* fondo neutro alrededor del cartel */
+  font-family: var(--fuente-texto);
+  color: var(--tinta);
+  -webkit-font-smoothing: antialiased;
+}
+
+p,
+h1,
+h2 {
+  margin: 0;
+}
+
+/* Contenedor oculto de símbolos SVG reutilizables */
+.sr-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+
+/* 3. LIENZO DEL CARTEL ---------------------------------------------------- */
+.poster {
+  /* Tamaño fijo A3 vertical: NO cambia nunca */
+  width: 848px;
+  height: 1200px;
+
+  /* Centrado en la ventana y escalado uniforme.
+     --escala la calcula JS en escalarCartel() */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(var(--escala, 1));
+  transform-origin: center center;
+
+  overflow: hidden;
+  background: var(--papel);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+/* Textura de grano sutil (ruido SVG) por encima de todo */
+.poster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;          /* no bloquea los eventos del ratón */
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Todo lo que tiene data-depth se desplaza con el parallax.
+   JS escribe --px y --py en cada elemento (en moverParallax). */
+[data-depth] {
+  translate: var(--px, 0px) var(--py, 0px);
+  will-change: translate;
+}
+
+
+/* 4. CAPAS DE FONDO ------------------------------------------------------- */
+.capa {
+  position: absolute;
+  pointer-events: none;
+}
+
+.capa--estrellas {
+  inset: 0;
+  width: 848px;
+  height: 1200px;
+}
+
+/* La "isla": Ítaca es pequeña, pero desde ella nacen grandes cambios */
+.capa--isla {
+  left: 470px;
+  top: 150px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: var(--arena);
+}
+
+/* Colores de relleno de las formas decorativas */
+.f-coral { fill: var(--coral); }
+.f-abeto { fill: var(--abeto); }
+.f-oro   { fill: var(--oro); }
+.f-tinta { fill: var(--tinta); }
+
+
+/* 5. CABECERA ------------------------------------------------------------- */
+.cabecera {
+  position: absolute;
+  left: 48px;
+  top: 44px;
+  width: 752px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--tinta);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* 6. FECHA XXL ------------------------------------------------------------ */
+.fecha {
+  position: absolute;
+  left: 34px;
+  top: 92px;
+  font-weight: normal;
+}
+
+.fecha__numero {
+  display: block;
+  font-family: var(--fuente-display);
+  font-size: 440px;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  /* Peso inicial; JS lo cambia en actualizarTipografia() */
+  font-variation-settings: "wght" 500, "opsz" 144;
+}
+
+.fecha__mes {
+  display: block;
+  margin: 10px 0 0 16px;
+  font-family: var(--fuente-display);
+  font-style: italic;
+  font-size: 64px;
+  line-height: 1;
+  font-variation-settings: "wght" 400, "opsz" 144;
+  color: var(--coral);
+}
+
+
+/* 7. REGALOS -------------------------------------------------------------- */
+.regalo {
+  position: absolute;
+  z-index: 5;
+}
+
+/* Posición de cada regalo dentro del lienzo */
+.regalo--a { left: 572px; top: 112px; width: 208px; }
+.regalo--b { left: 660px; top: 352px; width: 126px; }
+.regalo--c { left: 528px; top: 588px; width: 240px; }
+.regalo--d { left: 524px; top: 386px; width: 112px; }
+
+/* El cuerpo recibe la escala y la rotación (variables que escribe JS) */
+.regalo__cuerpo {
+  position: relative;
+  transform: scale(var(--regalo-escala, 1)) rotate(var(--regalo-giro, 0deg));
+  transition: transform 0.6s var(--curva-muelle);
+}
+
+.regalo__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Color de relleno: --regalo-color-actual lo pone JS al abrir */
+.regalo__relleno {
+  fill: var(--regalo-color-actual, var(--regalo-color));
+  transition: fill 0.45s var(--curva-suave);
+}
+
+.regalo__cinta { fill: var(--cinta-color); }
+.regalo__nudo  { fill: var(--tinta); }
+
+/* La tapa sube con translateY (variable --tapa-y que escribe JS) */
+.regalo__tapa {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  transform: translateY(var(--tapa-y, 0px)) rotate(var(--tapa-giro, 0deg));
+  transition: transform 0.6s var(--curva-muelle);
+}
+
+/* Destello dorado que "sale" de la caja al abrirla */
+.regalo__destello {
+  fill: var(--oro);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(var(--destello-y, 30px)) scale(var(--destello-escala, 0.3));
+  opacity: var(--destello-opacidad, 0);
+  transition: transform 0.7s var(--curva-muelle), opacity 0.3s ease;
+}
+
+/* Etiqueta con el deseo: oculta al principio, JS cambia su opacidad */
+.regalo__deseo {
+  position: absolute;
+  right: -6px;
+  bottom: 10%;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--papel);
+  border: 1.5px solid var(--tinta);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px) rotate(-4deg);
+  transition: opacity 0.35s ease, transform 0.5s var(--curva-muelle);
+}
+
+.regalo.esta-abierto .regalo__deseo {
+  transform: translateY(0) rotate(-4deg);
+}
+
+
+/* 8. MENSAJE -------------------------------------------------------------- */
+.mensaje {
+  position: absolute;
+  left: 48px;
+  top: 616px;
+  width: 440px;
+}
+
+.mensaje__titular {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.mensaje__texto {
+  margin-top: 18px;
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+
+/* 9. LLAMADA A LA ACCIÓN -------------------------------------------------- */
+.cta {
+  position: absolute;
+  left: 48px;
+  top: 820px;
+  width: 752px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.cta__boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 68px;
+  padding: 0 30px;
+  border-radius: 999px;          /* etiqueta muy redondeada */
+  background-color: var(--tinta);
+  color: var(--papel);
+  font-size: 22px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.35s var(--curva-suave);
+}
+
+.cta__boton:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 4px;
+}
+
+/* La flecha aparece desde la izquierda (JS cambia opacity y transform) */
+.cta__flecha {
+  display: inline-block;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.3s ease, transform 0.4s var(--curva-muelle);
+}
+
+.cta__impacto {
+  font-family: var(--fuente-display);
+  font-style: italic;
+  font-size: 44px;
+  font-variation-settings: "wght" 500, "opsz" 144;
+  color: var(--coral);
+}
+
+
+/* 10. MENSAJE FINAL ------------------------------------------------------- */
+.gracias {
+  position: absolute;
+  left: 48px;
+  top: 922px;
+  width: 752px;
+  font-family: var(--fuente-display);
+  font-style: italic;
+  font-size: 36px;
+  font-variation-settings: "wght" 400, "opsz" 144;
+  color: var(--abeto);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.8s var(--curva-suave);
+}
+
+
+/* 11. FRANJA DE BRANDING -------------------------------------------------- */
+.branding {
+  position: absolute;
+  left: 0;
+  top: 984px;
+  width: 848px;
+  height: 216px;
+  padding: 18px 48px 0;
+  background: var(--blanco);
+  border-top: 1px solid var(--tinta);
+}
+
+.branding__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.branding__entidad {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* El logo de AE Itaca es blanco: se presenta sobre una pastilla oscura */
+.branding__logo-itaca {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: var(--tinta);
+}
+
+.branding__logo-itaca img {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.branding__nombre {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.branding__nombre strong {
+  font-size: 18px;
+}
+
+.branding__sello {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--abeto);
+  border-radius: 999px;
+  color: var(--abeto);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.branding__sello svg {
+  fill: var(--oro);
+}
+
+.branding__fila--apoyo {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(20, 20, 20, 0.15);
+}
+
+.branding__etiqueta {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.branding__colaborador { width: auto; }
+.branding__colaborador--gencat { height: 38px; }
+.branding__colaborador--lh     { height: 52px; }
+.branding__colaborador--diba   { height: 38px; }
+
+.branding__contacto {
+  margin-top: 10px;
+  font-size: 16px;
+  font-style: normal;
+  letter-spacing: -0.005em;
+}
+
+
+/* 12. ESTADO FINAL (tecla F o todos los regalos abiertos) ----------------- */
+/* El cartel se muestra a escala 1, centrado; si la ventana es más
+   pequeña se permite scroll para poder verlo entero. */
+body.es-final {
+  overflow: auto;
+  display: grid;
+  place-items: safe center;
+  min-height: 100%;
+}
+
+body.es-final .poster {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+}
+
+
+/* 13. MOVIMIENTO REDUCIDO ------------------------------------------------- */
+/* Si el usuario lo pide en su sistema, las transiciones son casi instantáneas
+   (JS además desactiva el parallax). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

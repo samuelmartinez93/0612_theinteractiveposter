@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pequeños gestos, grandes ilusiones · AE Itaca</title>
+  <meta name="description" content="Cartel interactivo de la campaña solidaria de Navidad de la Associació Educativa Itaca: dona y regala ilusión el 21 de diciembre.">
+
+  <!-- Favicon inline (evita el error 404 de /favicon.ico en la consola) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='12' width='24' height='17' rx='3' fill='%23E5482F'/%3E%3Crect x='2' y='8' width='28' height='6' rx='2' fill='%23141414'/%3E%3Crect x='14' y='8' width='4' height='21' fill='%23F0EEE9'/%3E%3C/svg%3E">
+
+  <!-- Tipografías: Fraunces (variable, display) + Inter Tight (textos) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="main.js" defer></script>
+</head>
+<body>
+
+  <!-- Formas reutilizables: un destello de 4 puntas que usan estrellas y regalos -->
+  <svg class="sr-defs" aria-hidden="true" focusable="false">
+    <symbol id="destello" viewBox="-10 -10 20 20">
+      <path d="M0 -10 L2.4 -2.4 L10 0 L2.4 2.4 L0 10 L-2.4 2.4 L-10 0 L-2.4 -2.4 Z"/>
+    </symbol>
+  </svg>
+
+  <!--
+    LIENZO DEL CARTEL: 848 × 1200 px fijos (proporción A3).
+    Todo se posiciona en px dentro de este contenedor.
+    JS lo escala con transform: scale() para que quepa en la ventana.
+  -->
+  <main class="poster" id="poster" aria-label="Cartel: campaña solidaria de Navidad de AE Itaca, 21 de diciembre">
+
+    <!-- CAPA 0 · La "isla": un gran círculo suave detrás de los regalos (Ítaca es una pequeña isla) -->
+    <div class="capa capa--isla" data-depth="0.15" aria-hidden="true"></div>
+
+    <!-- CAPA 1 · Estrellas lejanas (se mueven poco) -->
+    <svg class="capa capa--estrellas" data-depth="0.3" viewBox="0 0 848 1200" aria-hidden="true">
+      <circle cx="420" cy="70"  r="4"  class="f-coral"/>
+      <circle cx="96"  cy="560" r="3"  class="f-abeto"/>
+      <circle cx="500" cy="300" r="5"  class="f-oro"/>
+      <circle cx="790" cy="760" r="4"  class="f-coral"/>
+      <circle cx="470" cy="590" r="3"  class="f-tinta"/>
+      <circle cx="300" cy="610" r="4"  class="f-oro"/>
+      <rect x="760" y="96" width="9" height="9" class="f-abeto" transform="rotate(45 764.5 100.5)"/>
+      <rect x="40"  y="880" width="8" height="8" class="f-coral" transform="rotate(45 44 884)"/>
+      <use href="#destello" x="510" y="110" width="18" height="18" class="f-oro"/>
+      <use href="#destello" x="410" y="545" width="16" height="16" class="f-abeto"/>
+      <use href="#destello" x="770" y="860" width="20" height="20" class="f-oro"/>
+    </svg>
+
+    <!-- CAPA 2 · Estrellas cercanas (se mueven más: sensación de profundidad) -->
+    <svg class="capa capa--estrellas" data-depth="0.7" viewBox="0 0 848 1200" aria-hidden="true">
+      <use href="#destello" x="476" y="96"  width="34" height="34" class="f-coral"/>
+      <use href="#destello" x="800" y="330" width="28" height="28" class="f-oro"/>
+      <use href="#destello" x="474" y="472" width="26" height="26" class="f-oro"/>
+      <use href="#destello" x="700" y="742" width="24" height="24" class="f-abeto"/>
+      <circle cx="808" cy="560" r="7" class="f-coral"/>
+      <circle cx="790" cy="960" r="6" class="f-abeto"/>
+    </svg>
+
+    <!-- CABECERA -->
+    <header class="cabecera">
+      <p class="cabecera__tema">Campaña solidaria de Navidad · AE Itaca</p>
+      <p class="cabecera__año">2026</p>
+    </header>
+
+    <!-- FECHA XXL: el "21" usa una fuente variable cuyo peso cambia con el ratón -->
+    <h1 class="fecha" data-depth="0.12">
+      <span class="fecha__numero" id="fecha-numero">21</span>
+      <span class="fecha__mes">de diciembre</span>
+    </h1>
+
+    <!--
+      REGALOS: cada uno tiene
+        · data-depth           → factor de parallax
+        · data-color-abierto   → color de relleno al abrirse
+        · --regalo-color / --cinta-color → colores iniciales (variables CSS)
+      Dentro del SVG la tapa (.regalo__tapa) y la caja (.regalo__caja) están
+      separadas para poder "abrirlo" subiendo la tapa con translateY.
+    -->
+
+    <!-- Regalo A · grande y cuadrado -->
+    <div class="regalo regalo--a" data-depth="0.9" data-color-abierto="var(--abeto)"
+         style="--regalo-color:var(--coral); --cinta-color:var(--tinta);">
+      <div class="regalo__cuerpo">
+        <svg class="regalo__svg" viewBox="0 0 200 220" aria-hidden="true">
+          <use class="regalo__destello" href="#destello" x="70" y="56" width="60" height="60"/>
+          <g class="regalo__caja">
+            <rect class="regalo__relleno" x="16" y="96" width="168" height="120" rx="8"/>
+            <rect class="regalo__cinta" x="88" y="96" width="24" height="120"/>
+          </g>
+          <g class="regalo__tapa">
+            <rect class="regalo__relleno" x="6" y="66" width="188" height="34" rx="8"/>
+            <rect class="regalo__cinta" x="88" y="66" width="24" height="34"/>
+            <circle class="regalo__cinta" cx="80" cy="50" r="16"/>
+            <circle class="regalo__cinta" cx="120" cy="50" r="16"/>
+            <rect class="regalo__nudo" x="92" y="56" width="16" height="12" rx="3"/>
+          </g>
+        </svg>
+        <span class="regalo__deseo">Un libro</span>
+      </div>
+    </div>
+
+    <!-- Regalo B · alto y estrecho -->
+    <div class="regalo regalo--b" data-depth="1.2" data-color-abierto="var(--coral)"
+         style="--regalo-color:var(--abeto); --cinta-color:var(--papel);">
+      <div class="regalo__cuerpo">
+        <svg class="regalo__svg" viewBox="0 0 130 200" aria-hidden="true">
+          <use class="regalo__destello" href="#destello" x="40" y="44" width="50" height="50"/>
+          <g class="regalo__caja">
+            <rect class="regalo__relleno" x="12" y="78" width="106" height="118" rx="8"/>
+            <rect class="regalo__cinta" x="56" y="78" width="18" height="118"/>
+          </g>
+          <g class="regalo__tapa">
+            <rect class="regalo__relleno" x="4" y="52" width="122" height="30" rx="8"/>
+            <rect class="regalo__cinta" x="56" y="52" width="18" height="30"/>
+            <circle class="regalo__cinta" cx="52" cy="38" r="13"/>
+            <circle class="regalo__cinta" cx="78" cy="38" r="13"/>
+            <rect class="regalo__nudo" x="58" y="42" width="14" height="11" rx="3"/>
+          </g>
+        </svg>
+        <span class="regalo__deseo">Un balón</span>
+      </div>
+    </div>
+
+    <!-- Regalo C · ancho y bajo -->
+    <div class="regalo regalo--c" data-depth="1" data-color-abierto="var(--coral)"
+         style="--regalo-color:var(--tinta); --cinta-color:var(--oro);">
+      <div class="regalo__cuerpo">
+        <svg class="regalo__svg" viewBox="0 0 240 150" aria-hidden="true">
+          <use class="regalo__destello" href="#destello" x="95" y="18" width="50" height="50"/>
+          <g class="regalo__caja">
+            <rect class="regalo__relleno" x="14" y="66" width="212" height="80" rx="8"/>
+            <rect class="regalo__cinta" x="108" y="66" width="24" height="80"/>
+          </g>
+          <g class="regalo__tapa">
+            <rect class="regalo__relleno" x="4" y="40" width="232" height="30" rx="8"/>
+            <rect class="regalo__cinta" x="108" y="40" width="24" height="30"/>
+            <circle class="regalo__cinta" cx="104" cy="26" r="14"/>
+            <circle class="regalo__cinta" cx="136" cy="26" r="14"/>
+            <rect class="regalo__nudo" x="112" y="30" width="16" height="12" rx="3"/>
+          </g>
+        </svg>
+        <span class="regalo__deseo">Colores</span>
+      </div>
+    </div>
+
+    <!-- Regalo D · pequeño -->
+    <div class="regalo regalo--d" data-depth="1.4" data-color-abierto="var(--tinta)"
+         style="--regalo-color:var(--coral); --cinta-color:var(--papel);">
+      <div class="regalo__cuerpo">
+        <svg class="regalo__svg" viewBox="0 0 120 130" aria-hidden="true">
+          <use class="regalo__destello" href="#destello" x="40" y="26" width="40" height="40"/>
+          <g class="regalo__caja">
+            <rect class="regalo__relleno" x="10" y="58" width="100" height="68" rx="7"/>
+            <rect class="regalo__cinta" x="52" y="58" width="16" height="68"/>
+          </g>
+          <g class="regalo__tapa">
+            <rect class="regalo__relleno" x="4" y="36" width="112" height="26" rx="7"/>
+            <rect class="regalo__cinta" x="52" y="36" width="16" height="26"/>
+            <circle class="regalo__cinta" cx="49" cy="24" r="11"/>
+            <circle class="regalo__cinta" cx="71" cy="24" r="11"/>
+            <rect class="regalo__nudo" x="54" y="27" width="12" height="10" rx="3"/>
+          </g>
+        </svg>
+        <span class="regalo__deseo">Un puzle</span>
+      </div>
+    </div>
+
+    <!-- MENSAJE DE SENSIBILIZACIÓN -->
+    <section class="mensaje">
+      <h2 class="mensaje__titular">Ningún niño ni niña sin regalo esta Navidad.</h2>
+      <p class="mensaje__texto">
+        <strong>Pequeños gestos, grandes ilusiones.</strong>
+        Tu donación se convierte en un regalo para la infancia de Collblanc-La&nbsp;Torrassa.
+      </p>
+    </section>
+
+    <!-- LLAMADA A LA ACCIÓN -->
+    <div class="cta">
+      <a class="cta__boton" id="cta" href="https://aeitaca.org" target="_blank" rel="noopener">
+        <span>Dona en aeitaca.org</span>
+        <span class="cta__flecha" aria-hidden="true">→</span>
+      </a>
+      <p class="cta__impacto">10&nbsp;€ = 1&nbsp;regalo</p>
+    </div>
+
+    <!-- MENSAJE FINAL (oculto hasta el estado final: tecla F o todos los regalos abiertos) -->
+    <p class="gracias" id="gracias" aria-live="polite">¡Gracias por convertir un gesto en ilusión!</p>
+
+    <!-- FRANJA DE BRANDING -->
+    <footer class="branding">
+      <div class="branding__fila">
+        <div class="branding__entidad">
+          <span class="branding__logo-itaca">
+            <img src="assets/img/LogoHD_itaca.webp" alt="Logo de la Associació Educativa Itaca" width="867" height="1200">
+          </span>
+          <p class="branding__nombre">
+            <strong>Associació Educativa Itaca</strong>
+            <span>Construimos oportunidades · desde 1977</span>
+          </p>
+        </div>
+        <p class="branding__sello">
+          <svg width="14" height="14" aria-hidden="true"><use href="#destello"/></svg>
+          Entidad declarada de utilidad pública
+        </p>
+      </div>
+
+      <div class="branding__fila branding__fila--apoyo">
+        <p class="branding__etiqueta">Con el apoyo de</p>
+        <img class="branding__colaborador branding__colaborador--gencat" src="assets/img/generalitat-dretssocials.png" alt="Generalitat de Catalunya · Departament de Drets Socials" width="454" height="108">
+        <img class="branding__colaborador branding__colaborador--lh" src="assets/img/logoLHospi.png" alt="Ajuntament de L'Hospitalet" width="599" height="260">
+        <img class="branding__colaborador branding__colaborador--diba" src="assets/img/Logotip_Diputacio.png" alt="Diputació de Barcelona" width="513" height="170">
+      </div>
+
+      <address class="branding__contacto">
+        Carrer del Montseny, 22 · 08903 L'Hospitalet de Llobregat · 934&nbsp;036&nbsp;997 · info@aeitaca.org
+      </address>
+    </footer>
+
+  </main>
+
+</body>
+</html>
